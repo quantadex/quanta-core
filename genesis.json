@@ -210,7 +210,7 @@
       ],
       "scale": 10000
     },
-    "block_interval": 5,
+    "block_interval": 1,
     "maintenance_interval": 86400,
     "maintenance_skip_slots": 3,
     "committee_proposal_review_period": 86400,
@@ -259,6 +259,36 @@
       "name": "bitcherry",
       "owner_key": "QA7rL3bwxumwRivoMQrRm9q9dukELFmxkxmHM2NmJBWENUvUGkK9",
       "active_key": "QA7rL3bwxumwRivoMQrRm9q9dukELFmxkxmHM2NmJBWENUvUGkK9",
+      "is_lifetime_member": true
+    },
+    {
+      "name": "quantasg-witness",
+      "owner_key": "QA7baNFN1GHP68SoGCVNsxyujd5jmDGseNSEpKaZQxT8ZLoUkbvt",
+      "active_key": "QA7baNFN1GHP68SoGCVNsxyujd5jmDGseNSEpKaZQxT8ZLoUkbvt",
+      "is_lifetime_member": true
+    },
+    {
+      "name": "quantalabs-witness",
+      "owner_key": "QA8kt5zzsxUcoGebMo9CpK6cUJK7xDbf2zZvcQ9KPCbrT78EqSPV",
+      "active_key": "QA8kt5zzsxUcoGebMo9CpK6cUJK7xDbf2zZvcQ9KPCbrT78EqSPV",
+      "is_lifetime_member": true
+    },
+    {
+      "name": "bitcherry-witness",
+      "owner_key": "QA6YjhPAmZUppi9ZcknkFXejEsUcyWFt5kGW8Hzr5YJKD3nYcXiS",
+      "active_key": "QA6YjhPAmZUppi9ZcknkFXejEsUcyWFt5kGW8Hzr5YJKD3nYcXiS",
+      "is_lifetime_member": true
+    },
+    {
+      "name": "clockbound-witness",
+      "owner_key": "QA6iEQFyqMUfoQdrKf1gKx82QHTdfLcuNr72YLzn1Q5n7C3Z9oXb",
+      "active_key": "QA6iEQFyqMUfoQdrKf1gKx82QHTdfLcuNr72YLzn1Q5n7C3Z9oXb",
+      "is_lifetime_member": true
+    },
+    {
+      "name": "flash-witness",
+      "owner_key": "QA6Y1Jd64neDU3RjxGqSVajsQdm7DC5qN6Yd2X3m3aVt6wNDfYjX",
+      "active_key": "QA6Y1Jd64neDU3RjxGqSVajsQdm7DC5qN6Yd2X3m3aVt6wNDfYjX",
       "is_lifetime_member": true
     }
   ],
