@@ -27,6 +27,9 @@
 #include <boost/multi_index/composite_key.hpp>
 
 namespace graphene { namespace chain {
+
+   share_type cut_fee(share_type a, uint16_t p);
+
    class database;
 
    /**
