@@ -174,6 +174,7 @@ namespace graphene { namespace chain {
       current_fees->validate();
       FC_ASSERT( maker_rebate_percent_of_fee <= 2*GRAPHENE_100_PERCENT);
       FC_ASSERT( referrer_rebate_percent_of_fee <= GRAPHENE_100_PERCENT);
+      FC_ASSERT( promo_referrer_rebate_percent_of_fee <= GRAPHENE_100_PERCENT);
       FC_ASSERT( reserve_percent_of_fee <= GRAPHENE_100_PERCENT );
       FC_ASSERT( network_percent_of_fee <= GRAPHENE_100_PERCENT );
       FC_ASSERT( lifetime_referrer_percent_of_fee <= GRAPHENE_100_PERCENT );

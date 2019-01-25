@@ -576,8 +576,10 @@ int database::match( const limit_order_object& usd, const limit_order_object& co
    result |= fill_limit_order( usd, usd_pays, usd_receives, cull_taker, match_price, false ); // the first param is taker
    result |= fill_limit_order( core, core_pays, core_receives, true, match_price, true ) << 1; // the second param is maker
 
-   // maker seller, taker seller, maker receives, taker receives
-   pay_rebates(core, usd, core_receives, usd_receives);
+   if( head_block_time() >= HARDFORK_CORE_QUANTA1_TIME ) {
+      // maker seller, taker seller, maker receives, taker receives
+      pay_rebates(core, usd, core_receives, usd_receives);
+   }
 
    FC_ASSERT( result != 0 );
    return result;
@@ -1121,12 +1123,15 @@ asset database::calculate_market_fee(const asset_object &trade_asset, const asse
    if( percent_fee.amount > trade_asset.options.max_market_fee )
       percent_fee.amount = trade_asset.options.max_market_fee;
 
-   //Taker fee is calculated as, market_fee - (market_fee * maker_rebate_percent_of_fee). Negative number reflects, fees coming from taker.
-   const auto &props = get_global_properties();
+   if( head_block_time() >= HARDFORK_CORE_QUANTA1_TIME ) {
+      //Taker fee is calculated as, market_fee - (market_fee * maker_rebate_percent_of_fee). Negative number reflects, fees coming from taker.
+      const auto &props = get_global_properties();
 
-   if (!is_maker) {
-      percent_fee.amount = percent_fee.amount - ((percent_fee.amount * props.parameters.maker_rebate_percent_of_fee) / GRAPHENE_100_PERCENT);
-      percent_fee.amount = std::max<share_type>(uint64_t(0), percent_fee.amount);
+      if (is_maker)
+      {
+         share_type target_fee = percent_fee.amount - ((percent_fee.amount * props.parameters.maker_rebate_percent_of_fee) / GRAPHENE_100_PERCENT);
+         percent_fee.amount = std::max<share_type>(uint64_t(0), target_fee);
+      }
    }
 
    return percent_fee;
@@ -1184,7 +1189,14 @@ int database::pay_rebates(const limit_order_object &core, const limit_order_obje
       total_fees_paid += receives.amount.value;
    }
 
+   account_id_type referrer = taker.referrer;
    uint16_t referrer_fee = props.parameters.referrer_rebate_percent_of_fee;
+
+   if (get(referrer).name == "quanta_promo")
+   {
+      referrer_fee = props.parameters.promo_referrer_rebate_percent_of_fee;
+   }
+
    if (referrer_fee > 0) {
       share_type fee = cut_fee(total_available_fees, referrer_fee);
       asset receives = recv_asset.amount(fee);
