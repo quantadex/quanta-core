@@ -1161,7 +1161,7 @@ int database::pay_rebates(const limit_order_object &core, const limit_order_obje
    const auto &props = get_global_properties();
 
    // lets caculate what taker paid to the fee pool A
-   const account_object &taker = core.seller(*this);
+   const account_object &taker = usd.seller(*this);
    const asset_object &recv_asset = usd_receives.asset_id(*this);
    asset taker_fee = calculate_market_fee(recv_asset, usd_receives, false);
 
@@ -1189,12 +1189,23 @@ int database::pay_rebates(const limit_order_object &core, const limit_order_obje
       total_fees_paid += receives.amount.value;
    }
 
-   account_id_type referrer = taker.referrer;
+   account_id_type referrer = taker.lifetime_referrer;
    uint16_t referrer_fee = props.parameters.referrer_rebate_percent_of_fee;
 
-   if (get(referrer).name == "quanta_promo")
+   if (referrer != GRAPHENE_NULL_ACCOUNT) 
    {
-      referrer_fee = props.parameters.promo_referrer_rebate_percent_of_fee;
+      // printf("taker = %s, Taker's referrer %s, registrar %s fee=%d\n",
+      //        taker.name.c_str(),
+      //        get(referrer).name.c_str(),
+      //        get(get(referrer).registrar).name.c_str(),
+      //        referrer_fee);
+
+      if (get(get(referrer).registrar).name == "quanta-promo")
+      {
+         referrer_fee = props.parameters.promo_referrer_rebate_percent_of_fee;
+      }
+
+      // printf("New fee %d\n", referrer_fee);
    }
 
    if (referrer_fee > 0) {
@@ -1205,8 +1216,8 @@ int database::pay_rebates(const limit_order_object &core, const limit_order_obje
       total_fees_paid += receives.amount.value;
    }
 
-   printf("maker rebate %ld, referrer rebate %ld\n", props.parameters.maker_rebate_percent_of_fee, referrer_fee);
-   printf("total available %ld, total paid = %ld\n", total_available_fees.value, total_fees_paid.value);
+   //printf("maker rebate %ld, referrer rebate %ld\n", props.parameters.maker_rebate_percent_of_fee, referrer_fee);
+   //printf("total available %ld, total paid = %ld\n", total_available_fees.value, total_fees_paid.value);
 
    // deduct fees from the pool A
    modify(recv_dyn_data, [&](asset_dynamic_data_object &obj) {

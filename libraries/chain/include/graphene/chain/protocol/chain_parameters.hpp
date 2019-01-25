@@ -52,7 +52,7 @@ namespace graphene { namespace chain {
       uint16_t                network_percent_of_fee              = GRAPHENE_DEFAULT_NETWORK_PERCENT_OF_FEE; ///< percent of transaction fees paid to network
       uint16_t                maker_rebate_percent_of_fee         = 5000;                                      ///< percent of transaction fees paid to network
       uint16_t                referrer_rebate_percent_of_fee      = 3000;                                    ///< percent of transaction fees paid to network
-      uint16_t                promo_referrer_rebate_percent_of_fee      = 4200;                                    ///< percent of transaction fees paid to network
+      uint16_t                promo_referrer_rebate_percent_of_fee      = 4000;                                    ///< percent of transaction fees paid to network
       uint16_t                lifetime_referrer_percent_of_fee    = GRAPHENE_DEFAULT_LIFETIME_REFERRER_PERCENT_OF_FEE; ///< percent of transaction fees paid to network
       uint32_t                cashback_vesting_period_seconds     = GRAPHENE_DEFAULT_CASHBACK_VESTING_PERIOD_SEC; ///< time after cashback rewards are accrued before they become liquid
       share_type              cashback_vesting_threshold          = GRAPHENE_DEFAULT_CASHBACK_VESTING_THRESHOLD; ///< the maximum cashback that can be received without vesting
