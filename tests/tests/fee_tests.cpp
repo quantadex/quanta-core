@@ -437,20 +437,16 @@ BOOST_AUTO_TEST_CASE(asset_claim_pool_test_quanta)
       // assume maker rebate is 50%, and referrer gets 30%
       // precision is 2
 
-      // bob is receiving izzy (taker) - pays at 50%. 
+      // bob is receiving izzy (taker)
       // alice is getting jill (maker) - pays 30 jill   30 - 30 (50/100) = 15
 
       // fee_pool B: 15.00 collected (jill/maker)
       // fee_pool A: 10.00 collected (izzy/taker)
       // at 30% referrer, referrer gets 3 izzy
       // fee_pool A: 10.00 - 3.00 = 7.00 izzy
+      const asset_object &izzycoin = izzycoin_id(db);
+      const asset_object &jillcoin = jillcoin_id(db);
       {
-         const asset_object &izzycoin = izzycoin_id(db);
-         const asset_object &jillcoin = jillcoin_id(db);
-
-         wdump( (izzycoin)(izzycoin.dynamic_asset_data_id(db))((*izzycoin.bitasset_data_id)(db)) );
-         wdump( (jillcoin)(jillcoin.dynamic_asset_data_id(db))((*jillcoin.bitasset_data_id)(db)) );
-
          // check the correct amount of fees has been awarded
          BOOST_CHECK(izzycoin.dynamic_asset_data_id(db).accumulated_fees == _izzy(7).amount);
          BOOST_CHECK(jillcoin.dynamic_asset_data_id(db).accumulated_fees == _jill(15).amount);
@@ -464,7 +460,30 @@ BOOST_AUTO_TEST_CASE(asset_claim_pool_test_quanta)
       }
 
       // TEST FOR OVER POSTIVE REBATE!
-      
+      db.modify(db.get_global_properties(), [&](global_property_object &_gpo) {
+         _gpo.parameters.maker_rebate_percent_of_fee = 13000; // 130%
+      });
+
+      create_sell_order(alice_id, _izzy(10000), _jill(30000)); // Alice is willing to sell her Izzy's for 3 Jill
+      create_sell_order(bob_id, _jill(30000), _izzy(10000));   // Bob is buying up to 200 Izzy's for up to 3.5 Jill
+
+      wdump((izzycoin)(izzycoin.dynamic_asset_data_id(db))((*izzycoin.bitasset_data_id)(db)));
+      wdump((jillcoin)(jillcoin.dynamic_asset_data_id(db))((*jillcoin.bitasset_data_id)(db)));
+
+      // assume maker rebate is 50%, and referrer gets 30%
+      // precision is 2
+
+      // bob is receiving izzy (taker) - pays at 10
+      // alice is getting jill (maker) - pays 30 jill, pays 0 maker fee.
+
+      // fee_pool B: 0.00 collected (jill/maker)
+      // fee_pool A: 10.00 collected (izzy/taker)
+      // at 30% referrer, referrer gets 3 izzy
+      // fee_pool A: pays maker 30%, 3.00 izzy
+      // fee_pool A: 10.00 - 3.00 - 3.00 = 4.00 izzy
+
+      BOOST_CHECK(izzycoin.dynamic_asset_data_id(db).accumulated_fees == _izzy(4).amount);
+      BOOST_CHECK(jillcoin.dynamic_asset_data_id(db).accumulated_fees == _jill(0).amount);
    }
    FC_LOG_AND_RETHROW()
 }
