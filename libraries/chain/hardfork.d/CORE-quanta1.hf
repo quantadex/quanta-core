@@ -1,3 +1,3 @@
 #ifndef HARDFORK_CORE_QUANTA1_TIME
-#define HARDFORK_CORE_QUANTA1_TIME (fc::time_point_sec( 1548878767 )) // Thu, 19 Jul 2018 14:02:00 UTC
+#define HARDFORK_CORE_QUANTA1_TIME (fc::time_point_sec( 1551920072 )) //  March 7, 2019 12:54 AM GMT
 #endif
