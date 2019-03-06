@@ -575,6 +575,12 @@ int database::match( const limit_order_object& usd, const limit_order_object& co
    int result = 0;
    result |= fill_limit_order( usd, usd_pays, usd_receives, cull_taker, match_price, false ); // the first param is taker
    result |= fill_limit_order( core, core_pays, core_receives, true, match_price, true ) << 1; // the second param is maker
+
+   if( head_block_time() >= HARDFORK_CORE_QUANTA1_TIME ) {
+      // maker seller, taker seller, maker receives, taker receives
+      pay_rebates(core, usd, core_receives, usd_receives);
+   }
+
    FC_ASSERT( result != 0 );
    return result;
 }
@@ -775,7 +781,7 @@ bool database::fill_limit_order( const limit_order_object& order, const asset& p
    const account_object& seller = order.seller(*this);
    const asset_object& recv_asset = receives.asset_id(*this);
 
-   auto issuer_fees = pay_market_fees( recv_asset, receives );
+   auto issuer_fees = pay_market_fees(recv_asset, receives, is_maker);
    pay_order( seller, receives - issuer_fees, pays );
 
    assert( pays.asset_id != receives.asset_id );
@@ -877,7 +883,7 @@ bool database::fill_settle_order( const force_settlement_object& settle, const a
 { try {
    bool filled = false;
 
-   auto issuer_fees = pay_market_fees(get(receives.asset_id), receives);
+   auto issuer_fees = pay_market_fees(get(receives.asset_id), receives, is_maker);
 
    if( pays < settle.balance )
    {
@@ -1100,10 +1106,10 @@ void database::pay_order( const account_object& receiver, const asset& receives,
    adjust_balance(receiver.get_id(), receives);
 }
 
-asset database::calculate_market_fee( const asset_object& trade_asset, const asset& trade_amount )
+asset database::calculate_market_fee(const asset_object &trade_asset, const asset &trade_amount, bool is_maker)
 {
    assert( trade_asset.id == trade_amount.asset_id );
-
+   
    if( !trade_asset.charges_market_fees() )
       return trade_asset.amount(0);
    if( trade_asset.options.market_fee_percent == 0 )
@@ -1117,12 +1123,23 @@ asset database::calculate_market_fee( const asset_object& trade_asset, const ass
    if( percent_fee.amount > trade_asset.options.max_market_fee )
       percent_fee.amount = trade_asset.options.max_market_fee;
 
+   if( head_block_time() >= HARDFORK_CORE_QUANTA1_TIME ) {
+      //Taker fee is calculated as, market_fee - (market_fee * maker_rebate_percent_of_fee). Negative number reflects, fees coming from taker.
+      const auto &props = get_global_properties();
+
+      if (is_maker)
+      {
+         share_type target_fee = percent_fee.amount - ((percent_fee.amount * props.parameters.maker_rebate_percent_of_fee) / GRAPHENE_100_PERCENT);
+         percent_fee.amount = std::max<share_type>(uint64_t(0), target_fee);
+      }
+   }
+
    return percent_fee;
 }
 
-asset database::pay_market_fees( const asset_object& recv_asset, const asset& receives )
+asset database::pay_market_fees( const asset_object& recv_asset, const asset& receives, bool is_maker )
 {
-   auto issuer_fees = calculate_market_fee( recv_asset, receives );
+   auto issuer_fees = calculate_market_fee( recv_asset, receives, is_maker );
    assert(issuer_fees <= receives );
 
    //Don't dirty undo state if not actually collecting any fees
@@ -1137,5 +1154,77 @@ asset database::pay_market_fees( const asset_object& recv_asset, const asset& re
 
    return issuer_fees;
 }
+
+// maker seller, taker seller, maker receives, taker receives
+int database::pay_rebates(const limit_order_object &core, const limit_order_object &usd, asset &core_receives, asset &usd_receives)
+{
+   const auto &props = get_global_properties();
+
+   // lets caculate what taker paid to the fee pool A
+   const account_object &taker = usd.seller(*this);
+   const asset_object &recv_asset = usd_receives.asset_id(*this);
+   asset taker_fee = calculate_market_fee(recv_asset, usd_receives, false);
+
+   // ensure we don't pay more than available fee pool
+   const auto &recv_dyn_data = recv_asset.dynamic_asset_data_id(*this);
+   share_type total_available_fees = std::min<share_type>(recv_dyn_data.accumulated_fees, taker_fee.amount.value);
+
+   if (taker_fee.amount == 0) {
+      return 0;
+   }
+
+   // calculate excess fees, which means we have to grab from taker
+   share_type total_fees_paid = 0;
+
+   assert(props.parameters.maker_rebate_percent_of_fee <= 2*GRAPHENE_100_PERCENT);
+
+   if (props.parameters.maker_rebate_percent_of_fee > GRAPHENE_100_PERCENT)
+   {
+      uint16_t maker_rebate_fee_excess = props.parameters.maker_rebate_percent_of_fee - GRAPHENE_100_PERCENT;
+      share_type fee = cut_fee(total_available_fees, maker_rebate_fee_excess);
+      asset receives = recv_asset.amount(fee);
+
+      const account_object &maker = core.seller(*this);
+      adjust_balance(maker.get_id(), receives);
+      total_fees_paid += receives.amount.value;
+   }
+
+   account_id_type referrer = taker.lifetime_referrer;
+   uint16_t referrer_fee = props.parameters.referrer_rebate_percent_of_fee;
+
+   if (referrer != GRAPHENE_NULL_ACCOUNT) 
+   {
+      // printf("taker = %s, Taker's referrer %s, registrar %s fee=%d\n",
+      //        taker.name.c_str(),
+      //        get(referrer).name.c_str(),
+      //        get(get(referrer).registrar).name.c_str(),
+      //        referrer_fee);
+
+      if (get(get(referrer).registrar).name == "quanta-promo")
+      {
+         referrer_fee = props.parameters.promo_referrer_rebate_percent_of_fee;
+      }
+
+      // printf("New fee %d\n", referrer_fee);
+   }
+
+   if (referrer_fee > 0) {
+      share_type fee = cut_fee(total_available_fees, referrer_fee);
+      asset receives = recv_asset.amount(fee);
+
+      adjust_balance(taker.referrer, receives);
+      total_fees_paid += receives.amount.value;
+   }
+
+   //printf("maker rebate %ld, referrer rebate %ld\n", props.parameters.maker_rebate_percent_of_fee, referrer_fee);
+   //printf("total available %ld, total paid = %ld\n", total_available_fees.value, total_fees_paid.value);
+
+   // deduct fees from the pool A
+   modify(recv_dyn_data, [&](asset_dynamic_data_object &obj) {
+      //idump((issuer_fees));
+      obj.accumulated_fees -= total_fees_paid;
+   });
+}
+
 
 } }
