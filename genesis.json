@@ -208,7 +208,7 @@
           }
         ]
       ],
-      "scale": 100
+      "scale": 10000
     },
     "block_interval": 1,
     "maintenance_interval": 86400,
