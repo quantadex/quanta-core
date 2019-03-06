@@ -23,30 +23,30 @@ RUN \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ADD . /bitshares-core
-WORKDIR /bitshares-core
-
+ADD https://github.com/quantadex/quanta-core/releases/download/1.03/cli_wallet.linux.amd64  /usr/local/bin/cli_wallet
+ADD https://github.com/quantadex/quanta-core/releases/download/1.03/witness_node.linux.amd64 /usr/local/bin/witness_node
+RUN chmod +x /usr/local/bin/cli_wallet  /usr/local/bin/witness_node
 # Compile
-RUN \
-    ( git submodule sync --recursive || \
-      find `pwd`  -type f -name .git | \
-	while read f; do \
-	  rel="$(echo "${f#$PWD/}" | sed 's=[^/]*/=../=g')"; \
-	  sed -i "s=: .*/.git/=: $rel/=" "$f"; \
-	done && \
-      git submodule sync --recursive ) && \
-    git submodule update --init --recursive && \
-    cmake \
-        -DCMAKE_BUILD_TYPE=Release \
-        . && \
-    make witness_node cli_wallet && \
-    install -s programs/witness_node/witness_node programs/cli_wallet/cli_wallet /usr/local/bin && \
-    #
-    # Obtain version
-    mkdir /etc/bitshares && \
-    git rev-parse --short HEAD > /etc/bitshares/version && \
-    cd / && \
-    rm -rf /bitshares-core
+# RUN \
+#     ( git submodule sync --recursive || \
+#       find `pwd`  -type f -name .git | \
+# 	while read f; do \
+# 	  rel="$(echo "${f#$PWD/}" | sed 's=[^/]*/=../=g')"; \
+# 	  sed -i "s=: .*/.git/=: $rel/=" "$f"; \
+# 	done && \
+#       git submodule sync --recursive ) && \
+#     git submodule update --init --recursive && \
+#     cmake \
+#         -DCMAKE_BUILD_TYPE=Release \
+#         . && \
+#     make witness_node cli_wallet && \
+#     install -s programs/witness_node/witness_node programs/cli_wallet/cli_wallet /usr/local/bin && \
+#     #
+#     # Obtain version
+#     mkdir /etc/bitshares && \
+#     git rev-parse --short HEAD > /etc/bitshares/version && \
+#     cd / && \
+#     rm -rf /bitshares-core
 
 # Home directory $HOME
 WORKDIR /
@@ -65,7 +65,8 @@ EXPOSE 1776
 # default exec/config files
 ADD docker/default_config.ini /etc/bitshares/config.ini
 ADD docker/bitsharesentry.sh /usr/local/bin/bitsharesentry.sh
-RUN chmod a+x /usr/local/bin/bitsharesentry.sh
+ADD docker/wait_for_it.sh /usr/local/bin/wait_for_it.sh
+RUN chmod a+x /usr/local/bin/bitsharesentry.sh  /usr/local/bin/wait_for_it.sh
 
 # Make Docker send SIGINT instead of SIGTERM to the daemon
 STOPSIGNAL SIGINT

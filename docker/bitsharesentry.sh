@@ -2,7 +2,9 @@
 BITSHARESD="/usr/local/bin/witness_node"
 
 # For blockchain download
-VERSION=`cat /etc/bitshares/version`
+# VERSION=`cat /etc/bitshares/version`
+
+sleep 5
 
 ## Supported Environmental Variables
 #
