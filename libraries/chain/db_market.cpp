@@ -1129,7 +1129,7 @@ asset database::calculate_market_fee(const asset_object &trade_asset, const asse
 
       if (is_maker)
       {
-         share_type target_fee = percent_fee.amount - ((percent_fee.amount * props.parameters.maker_rebate_percent_of_fee) / GRAPHENE_100_PERCENT);
+         share_type target_fee = percent_fee.amount - ((percent_fee.amount * *props.parameters.extensions.value.maker_rebate_percent_of_fee) / GRAPHENE_100_PERCENT);
          percent_fee.amount = std::max<share_type>(uint64_t(0), target_fee);
       }
    }
@@ -1176,11 +1176,11 @@ int database::pay_rebates(const limit_order_object &core, const limit_order_obje
    // calculate excess fees, which means we have to grab from taker
    share_type total_fees_paid = 0;
 
-   assert(props.parameters.maker_rebate_percent_of_fee <= 2*GRAPHENE_100_PERCENT);
+   assert(*props.parameters.extensions.value.maker_rebate_percent_of_fee <= 2*GRAPHENE_100_PERCENT);
 
-   if (props.parameters.maker_rebate_percent_of_fee > GRAPHENE_100_PERCENT)
+   if (*props.parameters.extensions.value.maker_rebate_percent_of_fee > GRAPHENE_100_PERCENT)
    {
-      uint16_t maker_rebate_fee_excess = props.parameters.maker_rebate_percent_of_fee - GRAPHENE_100_PERCENT;
+      uint16_t maker_rebate_fee_excess = *props.parameters.extensions.value.maker_rebate_percent_of_fee - GRAPHENE_100_PERCENT;
       share_type fee = cut_fee(total_available_fees, maker_rebate_fee_excess);
       asset receives = recv_asset.amount(fee);
 
@@ -1190,7 +1190,7 @@ int database::pay_rebates(const limit_order_object &core, const limit_order_obje
    }
 
    account_id_type referrer = taker.lifetime_referrer;
-   uint16_t referrer_fee = props.parameters.referrer_rebate_percent_of_fee;
+   uint16_t referrer_fee = *props.parameters.extensions.value.referrer_rebate_percent_of_fee;
 
    if (referrer != GRAPHENE_NULL_ACCOUNT) 
    {
@@ -1202,7 +1202,7 @@ int database::pay_rebates(const limit_order_object &core, const limit_order_obje
 
       if (get(get(referrer).registrar).name == "quanta-promo")
       {
-         referrer_fee = props.parameters.promo_referrer_rebate_percent_of_fee;
+         referrer_fee = *props.parameters.extensions.value.promo_referrer_rebate_percent_of_fee;
       }
 
       // printf("New fee %d\n", referrer_fee);

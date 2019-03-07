@@ -463,7 +463,7 @@ BOOST_AUTO_TEST_CASE(asset_claim_pool_test_quanta)
       // TEST FOR OVER POSTIVE REBATE!
       //
       db.modify(db.get_global_properties(), [&](global_property_object &_gpo) {
-         _gpo.parameters.maker_rebate_percent_of_fee = 13000; // 130%
+         _gpo.parameters.extensions.value.maker_rebate_percent_of_fee = 13000; // 130%
       });
 
       create_sell_order(alice_id, _izzy(10000), _jill(30000)); // Alice is willing to sell her Izzy's for 3 Jill
@@ -492,7 +492,7 @@ BOOST_AUTO_TEST_CASE(asset_claim_pool_test_quanta)
       // Test for power referrals
       //
       db.modify(db.get_global_properties(), [&](global_property_object &_gpo) {
-         _gpo.parameters.promo_referrer_rebate_percent_of_fee = 4000; // 40%
+         _gpo.parameters.extensions.value.promo_referrer_rebate_percent_of_fee = 4000; // 40%
       });
 
       // expect to pay out 4.00
