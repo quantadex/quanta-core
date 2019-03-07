@@ -339,9 +339,205 @@ BOOST_AUTO_TEST_CASE(asset_claim_pool_test)
     FC_LOG_AND_RETHROW()
 }
 
-///////////////////////////////////////////////////////////////
-// cashback_test infrastructure                              //
-///////////////////////////////////////////////////////////////
+BOOST_AUTO_TEST_CASE(asset_claim_pool_test_quanta)
+{
+   try
+   {
+      ACTORS((alice)(bob)(izzy)(jill));
+      // Izzy issues asset to Alice
+      // Jill issues asset to Bob
+      // Alice and Bob trade in the market and pay fees
+      // Verify that Izzy and Jill can claim the fees
+
+      const share_type core_prec = asset::scaled_precision(asset_id_type()(db).precision);
+
+      // Return number of core shares (times precision)
+      auto _core = [&](int64_t x) -> asset { return asset(x * core_prec); };
+
+      transfer(committee_account, alice_id, _core(100000000));
+      transfer(committee_account, bob_id, _core(100000000));
+      transfer(committee_account, izzy_id, _core(100000000));
+      transfer(committee_account, jill_id, _core(100000000));
+
+      asset_id_type izzycoin_id = create_bitasset("IZZYCOIN", izzy_id, GRAPHENE_1_PERCENT/10, charge_market_fee).id;
+      asset_id_type jillcoin_id = create_bitasset("JILLCOIN", jill_id, GRAPHENE_1_PERCENT/10, charge_market_fee).id;
+
+      const share_type izzy_prec = asset::scaled_precision(asset_id_type(izzycoin_id)(db).precision);
+      const share_type jill_prec = asset::scaled_precision(asset_id_type(jillcoin_id)(db).precision);
+
+      printf("Precision %d, %d", asset_id_type(izzycoin_id)(db).precision, asset_id_type(jillcoin_id)(db).precision);
+
+          auto _izzy = [&](int64_t x) -> asset { return asset(x * izzy_prec, izzycoin_id); };
+      auto _jill = [&](int64_t x) -> asset { return asset(x * jill_prec, jillcoin_id); };
+
+      update_feed_producers(izzycoin_id(db), {izzy_id});
+      update_feed_producers(jillcoin_id(db), {jill_id});
+
+      const asset izzy_satoshi = asset(1, izzycoin_id);
+      const asset jill_satoshi = asset(1, jillcoin_id);
+
+      // Izzycoin is worth 100 BTS
+      price_feed feed;
+      feed.settlement_price = price(_izzy(1), _core(100));
+      feed.maintenance_collateral_ratio = 175 * GRAPHENE_COLLATERAL_RATIO_DENOM / 100;
+      feed.maximum_short_squeeze_ratio = 150 * GRAPHENE_COLLATERAL_RATIO_DENOM / 100;
+      publish_feed(izzycoin_id(db), izzy, feed);
+
+      // Jillcoin is worth 30 BTS
+      feed.settlement_price = price(_jill(1), _core(30));
+      feed.maintenance_collateral_ratio = 175 * GRAPHENE_COLLATERAL_RATIO_DENOM / 100;
+      feed.maximum_short_squeeze_ratio = 150 * GRAPHENE_COLLATERAL_RATIO_DENOM / 100;
+      publish_feed(jillcoin_id(db), jill, feed);
+
+      enable_fees();
+
+      // Alice and Bob create some coins
+      borrow(alice_id, _izzy(30000), _core(9000000));
+      borrow(bob_id, _jill(200000), _core(18000000));
+
+      printf("BEFORE blocktime=%ld, hardfork=%ld\n", db.head_block_time(), HARDFORK_CORE_QUANTA1_TIME);
+      if (db.head_block_time() < HARDFORK_CORE_QUANTA1_TIME)
+      {
+         // can't claim before hardfork
+         // GRAPHENE_REQUIRE_THROW(claim_fees(izzy_id, _izzy(1)), fc::exception);
+         generate_blocks(HARDFORK_CORE_QUANTA1_TIME);
+         while (db.head_block_time() <= HARDFORK_CORE_QUANTA1_TIME)
+         {
+            generate_block();
+         }
+      }
+      printf("AFTER blocktime=%ld, hardfork=%ld\n", db.head_block_time(), HARDFORK_CORE_QUANTA1_TIME);
+      set_expiration(db, trx);
+
+      // Alice and Bob place orders which match
+      create_sell_order(alice_id, _izzy(10000), _jill(30000)); // Alice is willing to sell her Izzy's for 3 Jill
+      create_sell_order(bob_id, _jill(30000), _izzy(10000));   // Bob is buying up to 200 Izzy's for up to 3.5 Jill
+
+      // 10000 Izzys and 30000 Jills are matched, so the fees should be
+      //   price 1:3
+      //   10 Izzy (.1%) and 30 Jill (.1%).
+
+      auto claim_fees = [&](account_id_type issuer, asset amount_to_claim) {
+         asset_claim_fees_operation claim_op;
+         claim_op.issuer = issuer;
+         claim_op.amount_to_claim = amount_to_claim;
+         signed_transaction tx;
+         tx.operations.push_back(claim_op);
+         db.current_fee_schedule().set_fee(tx.operations.back());
+         set_expiration(db, tx);
+         fc::ecc::private_key my_pk = (issuer == izzy_id) ? izzy_private_key : jill_private_key;
+         fc::ecc::private_key your_pk = (issuer == izzy_id) ? jill_private_key : izzy_private_key;
+         sign(tx, your_pk);
+         GRAPHENE_REQUIRE_THROW(PUSH_TX(db, tx), fc::exception);
+         tx.clear_signatures();
+         sign(tx, my_pk);
+         PUSH_TX(db, tx);
+      };
+
+      // assume maker rebate is 50%, and referrer gets 30%
+      // precision is 2
+
+      // bob is receiving izzy (taker)
+      // alice is getting jill (maker) - pays 30 jill   30 - 30 (50/100) = 15
+
+      // fee_pool B: 15.00 collected (jill/maker)
+      // fee_pool A: 10.00 collected (izzy/taker)
+      // at 30% referrer, referrer gets 3 izzy
+      // fee_pool A: 10.00 - 3.00 = 7.00 izzy
+      const asset_object &izzycoin = izzycoin_id(db);
+      const asset_object &jillcoin = jillcoin_id(db);
+      {
+         // check the correct amount of fees has been awarded
+         BOOST_CHECK(izzycoin.dynamic_asset_data_id(db).accumulated_fees == _izzy(7).amount);
+         BOOST_CHECK(jillcoin.dynamic_asset_data_id(db).accumulated_fees == _jill(15).amount);
+
+         claim_fees(izzy_id, _izzy(7));
+         GRAPHENE_REQUIRE_THROW(claim_fees(izzy_id, izzy_satoshi), fc::exception);
+         BOOST_CHECK(izzycoin.dynamic_asset_data_id(db).accumulated_fees == _izzy(0).amount);
+
+         claim_fees(jill_id, _jill(15));
+         BOOST_CHECK(jillcoin.dynamic_asset_data_id(db).accumulated_fees == _jill(0).amount);
+      }
+
+      //
+      // TEST FOR OVER POSTIVE REBATE!
+      //
+      db.modify(db.get_global_properties(), [&](global_property_object &_gpo) {
+         _gpo.parameters.maker_rebate_percent_of_fee = 13000; // 130%
+      });
+
+      create_sell_order(alice_id, _izzy(10000), _jill(30000)); // Alice is willing to sell her Izzy's for 3 Jill
+      create_sell_order(bob_id, _jill(30000), _izzy(10000));   // Bob is buying up to 200 Izzy's for up to 3.5 Jill
+
+      // assume maker rebate is 50%, and referrer gets 30%
+      // precision is 2
+
+      // bob is receiving izzy (taker) - pays at 10
+      // alice is getting jill (maker) - pays 30 jill, pays 0 maker fee.
+
+      // fee_pool B: 0.00 collected (jill/maker)
+      // fee_pool A: 10.00 collected (izzy/taker)
+      // at 30% referrer, referrer gets 3 izzy
+      // fee_pool A: pays maker 30%, 3.00 izzy
+      // fee_pool A: 10.00 - 3.00 - 3.00 = 4.00 izzy
+
+      BOOST_CHECK(izzycoin.dynamic_asset_data_id(db).accumulated_fees == _izzy(4).amount);
+      BOOST_CHECK(jillcoin.dynamic_asset_data_id(db).accumulated_fees == _jill(0).amount);
+
+      claim_fees(izzy_id, _izzy(4));
+      GRAPHENE_REQUIRE_THROW(claim_fees(izzy_id, izzy_satoshi), fc::exception);
+      BOOST_CHECK(izzycoin.dynamic_asset_data_id(db).accumulated_fees == _izzy(0).amount);
+
+      // 
+      // Test for power referrals
+      //
+      db.modify(db.get_global_properties(), [&](global_property_object &_gpo) {
+         _gpo.parameters.promo_referrer_rebate_percent_of_fee = 4000; // 40%
+      });
+
+      // expect to pay out 4.00
+      // fee_pool A: 10.0 - 4.0 - 3.0 = 300      
+      const account_object &quanta_promo = create_account("quanta-promo");
+      transfer(committee_account, quanta_promo.get_id(), _core(100));
+      upgrade_to_lifetime_member(quanta_promo.get_id());
+      upgrade_to_lifetime_member(alice_id);
+
+      // referrer is registered with special quanta_promo account
+      const account_object &promo_ruser = create_account("promoruser", quanta_promo, quanta_promo);
+      transfer(committee_account, promo_ruser.get_id(), _core(100));
+      upgrade_to_lifetime_member(promo_ruser.get_id());
+      
+      //printf("promo? %s", get_account("promo-ruser").registrar)
+
+      // trading account is referred promo user
+      const account_object &trading_user = create_account("trading-account", quanta_promo, promo_ruser);
+      account_id_type trading_id = trading_user.get_id();
+
+      // tradingaccount -> quanta_ruser -> quanta_promo
+
+      transfer(committee_account, trading_id, _core(20000000));
+      publish_feed(jillcoin_id(db), jill, feed);
+      borrow(trading_id, _jill(200000), _core(18000000));
+
+      create_sell_order(alice_id, _izzy(10000), _jill(30000)); // Alice is willing to sell her Izzy's for 3 Jill
+      create_sell_order(trading_id, _jill(30000), _izzy(10000));   // Bob is buying up to 200 Izzy's for up to 3.5 Jill
+
+      wdump((izzycoin)(izzycoin.dynamic_asset_data_id(db))((*izzycoin.bitasset_data_id)(db)));
+      wdump((jillcoin)(jillcoin.dynamic_asset_data_id(db))((*jillcoin.bitasset_data_id)(db)));
+
+      BOOST_CHECK(izzycoin.dynamic_asset_data_id(db).accumulated_fees == _izzy(3).amount);
+      BOOST_CHECK(jillcoin.dynamic_asset_data_id(db).accumulated_fees == _jill(0).amount);
+
+      claim_fees(izzy_id, _izzy(3));
+      GRAPHENE_REQUIRE_THROW(claim_fees(izzy_id, izzy_satoshi), fc::exception);
+      BOOST_CHECK(izzycoin.dynamic_asset_data_id(db).accumulated_fees == _izzy(0).amount);
+   }
+   FC_LOG_AND_RETHROW()
+}
+
+   ///////////////////////////////////////////////////////////////
+   // cashback_test infrastructure                              //
+   ///////////////////////////////////////////////////////////////
 
 #define CHECK_BALANCE( actor_name, amount ) \
    BOOST_CHECK_EQUAL( get_balance( actor_name ## _id, asset_id_type() ), amount )
