@@ -1214,8 +1214,15 @@ int database::pay_rebates(const account_object &maker, const account_object &tak
       share_type fee = cut_fee(total_available_fees, referrer_fee);
       asset receives = recv_asset.amount(fee);
 
+      printf("cutting referral fee %s %lld\n", get(taker.referrer).name.c_str(), receives.amount.value);
+      wlog("cutting referral fee");
+
       adjust_balance(taker.referrer, receives);
       total_fees_paid += receives.amount.value;
+
+      modify(get_account_stats_by_owner(taker.referrer), [&](account_statistics_object &stats) {
+         stats.adjust_referral_paid(receives);
+      });
    }
 
    //printf("maker rebate %ld, referrer rebate %ld\n", props.parameters.maker_rebate_percent_of_fee, referrer_fee);

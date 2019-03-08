@@ -99,11 +99,22 @@ namespace graphene { namespace chain {
           */
          share_type pending_vested_fees;
 
+         struct options_type
+         {
+            optional<vector<asset>> referral_fee_paid;
+         };
+
+         typedef extension <options_type> extensions_type;
+         extensions_type extensions;
+
          /// Whether this account has pending fees, no matter vested or not
          inline bool has_pending_fees() const { return pending_fees > 0 || pending_vested_fees > 0; }
 
          /// Whether need to process this account during the maintenance interval
          inline bool need_maintenance() const { return has_some_core_voting() || has_pending_fees(); }
+
+
+         void adjust_referral_paid(asset delta);
 
          /// @brief Split up and pay out @ref pending_fees and @ref pending_vested_fees
          void process_fees(const account_object& a, database& d) const;

@@ -104,6 +104,33 @@ void account_statistics_object::process_fees(const account_object& a, database& 
    }
 }
 
+void account_statistics_object::adjust_referral_paid(asset delta)
+{
+   if (delta.amount == 0)
+      return;
+
+   if (!this->extensions.value.referral_fee_paid.valid()) {
+      printf("Create new vector\n");
+      this->extensions.value.referral_fee_paid = optional<vector<asset>>();
+      wlog("create vector");
+   }
+
+   auto balance = this->extensions.value.referral_fee_paid;
+   assert(balance.valid());
+
+   auto it = std::find_if(balance->begin(), balance->end(),
+                     [&](const asset &target) { return target.asset_id == delta.asset_id; });
+
+   if (it != balance->end())
+   {
+      *it = *it + delta;
+   } else {
+      balance->push_back(delta);
+      printf("add new vector\n");
+      wlog("add new vector");
+   }
+}
+
 void account_statistics_object::pay_fee( share_type core_fee, share_type cashback_vesting_threshold )
 {
    if( core_fee > cashback_vesting_threshold )
