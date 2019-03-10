@@ -1214,8 +1214,7 @@ int database::pay_rebates(const account_object &maker, const account_object &tak
       share_type fee = cut_fee(total_available_fees, referrer_fee);
       asset receives = recv_asset.amount(fee);
 
-      printf("cutting referral fee %s %lld\n", get(taker.referrer).name.c_str(), receives.amount.value);
-      wlog("cutting referral fee");
+      ilog("cutting referral fee ${name} ${amount}",("name",  get(taker.referrer).name.c_str())("amount", receives.amount.value));
 
       adjust_balance(taker.referrer, receives);
       total_fees_paid += receives.amount.value;

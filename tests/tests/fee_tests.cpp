@@ -396,7 +396,7 @@ BOOST_AUTO_TEST_CASE(quanta_bonus) {
 
       create_sell_order(beta.id, _btc(1000), _usd(1000)); // Alice is willing to sell her Izzy's for 3 Jill
 
-       BOOST_CHECK_EQUAL(get_balance(alpha.id, btc_id), precision*(995+995));
+       BOOST_CHECK_EQUAL(get_balance(alpha.id, btc_id), precision*(950+950));
        BOOST_CHECK_EQUAL(get_balance(alpha.id, usd_id), precision*(0)); // locked away
 
        BOOST_CHECK_EQUAL(get_balance(beta.id, btc_id), precision*(0));

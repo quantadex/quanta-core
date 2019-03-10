@@ -110,13 +110,10 @@ void account_statistics_object::adjust_referral_paid(asset delta)
       return;
 
    if (!this->extensions.value.referral_fee_paid.valid()) {
-      printf("Create new vector\n");
-      this->extensions.value.referral_fee_paid = optional<vector<asset>>();
-      wlog("create vector");
+      this->extensions.value.referral_fee_paid = vector<asset>();
    }
 
-   auto balance = this->extensions.value.referral_fee_paid;
-   assert(balance.valid());
+   optional<vector<asset>> &balance = this->extensions.value.referral_fee_paid;
 
    auto it = std::find_if(balance->begin(), balance->end(),
                      [&](const asset &target) { return target.asset_id == delta.asset_id; });
@@ -126,8 +123,6 @@ void account_statistics_object::adjust_referral_paid(asset delta)
       *it = *it + delta;
    } else {
       balance->push_back(delta);
-      printf("add new vector\n");
-      wlog("add new vector");
    }
 }
 

@@ -468,6 +468,7 @@ FC_REFLECT_DERIVED( graphene::chain::account_statistics_object,
                     (has_cashback_vb)
                     (is_voting)
                     (lifetime_fees_paid)
-                    (pending_fees)(pending_vested_fees)
+                    (pending_fees)(pending_vested_fees)(extensions)
                   )
 
+FC_REFLECT(graphene::chain::account_statistics_object::options_type, (referral_fee_paid))
