@@ -339,6 +339,78 @@ BOOST_AUTO_TEST_CASE(asset_claim_pool_test)
     FC_LOG_AND_RETHROW()
 }
 
+BOOST_AUTO_TEST_CASE(quanta_bonus) {
+    try {
+      ACTORS((alice)(bob)(izzy)(jill));
+      const auto &btc_obj = create_user_issued_asset("BTC", izzy_id(db), charge_market_fee,
+                                                 price(asset(1, asset_id_type(1)), asset(1)), 2, GRAPHENE_1_PERCENT);
+      const auto &usd_obj = create_user_issued_asset("USD", izzy_id(db), charge_market_fee,
+                                                 price(asset(1, asset_id_type(1)), asset(1)), 2, GRAPHENE_1_PERCENT);
+
+      asset_id_type btc_id = btc_obj.id;
+      asset_id_type usd_id = usd_obj.id;
+
+      auto _btc = [&](int64_t x) -> asset { return asset(x * 100, btc_id); };
+      auto _usd = [&](int64_t x) -> asset { return asset(x * 100, usd_id); };
+
+      const share_type core_prec = asset::scaled_precision(asset_id_type()(db).precision);
+      auto _core = [&](int64_t x) -> asset { return asset(x * core_prec); };
+
+      uint32_t skip = database::skip_witness_signature
+                 | database::skip_transaction_signatures
+                 | database::skip_transaction_dupe_check
+                 | database::skip_block_size_check
+                 | database::skip_tapos_check
+                 | database::skip_authority_check
+                 | database::skip_merkle_check
+      ;
+      generate_blocks(HARDFORK_CORE_QUANTA1_TIME, true, skip);
+
+      transfer( committee_account, alice_id, _core(1000) );
+      transfer( committee_account, bob_id, _core(1000) );
+
+      //       upgrade_to_lifetime_member(alice_id);
+      //       upgrade_to_lifetime_member(bob_id);
+
+      const account_object &alpha = create_account("alpha", alice, bob);
+      const account_object &beta = create_account("beta", alice, bob);
+
+      issue_uia(alpha.id, _usd(2000));
+      issue_uia(beta.id, _btc(2000));
+
+      create_sell_order( alpha.id, _usd(2000), _btc(2000));   // Bob is buying up to 200 Izzy's for up to 3.5 Jill
+      create_sell_order(beta.id, _btc(1000), _usd(1000)); // Alice is willing to sell her Izzy's for 3 Jill
+
+      printf("referrer balance=%lld jill %lld izzy bob = %lld usd %lld btc\n",
+        get_balance(alpha.id, btc_id),
+        get_balance(beta.id, usd_id), get_balance(bob.id, usd_id), get_balance(bob.id, btc_id));
+
+      int fee = 1000.0 * 0.01;
+      int precision = 100;
+
+       BOOST_CHECK_EQUAL(get_balance(alpha.id, btc_id), precision*(1000-(fee/2)));
+       BOOST_CHECK_EQUAL(get_balance(alpha.id, usd_id), precision*(2000-2000)); // locked away
+
+       BOOST_CHECK_EQUAL(get_balance(beta.id, btc_id), precision*(2000-1000));
+       BOOST_CHECK_EQUAL(get_balance(beta.id, usd_id), precision*(1000-fee));
+
+      create_sell_order(beta.id, _btc(1000), _usd(1000)); // Alice is willing to sell her Izzy's for 3 Jill
+
+       BOOST_CHECK_EQUAL(get_balance(alpha.id, btc_id), precision*(950+950));
+       BOOST_CHECK_EQUAL(get_balance(alpha.id, usd_id), precision*(0)); // locked away
+
+       BOOST_CHECK_EQUAL(get_balance(beta.id, btc_id), precision*(0));
+       BOOST_CHECK_EQUAL(get_balance(beta.id, usd_id), precision*(2000-2*fee));
+
+       printf("referrer balance=%lld jill %lld izzy bob = %lld usd %lld btc\n",
+              get_balance(alpha.id, btc_id),
+              get_balance(beta.id, usd_id), get_balance(bob.id, usd_id), get_balance(bob.id, btc_id));
+
+
+    }
+    FC_LOG_AND_RETHROW();
+}
+
 BOOST_AUTO_TEST_CASE(asset_claim_pool_test_quanta)
 {
    try
@@ -488,7 +560,7 @@ BOOST_AUTO_TEST_CASE(asset_claim_pool_test_quanta)
       GRAPHENE_REQUIRE_THROW(claim_fees(izzy_id, izzy_satoshi), fc::exception);
       BOOST_CHECK(izzycoin.dynamic_asset_data_id(db).accumulated_fees == _izzy(0).amount);
 
-      // 
+      //
       // Test for power referrals
       //
       db.modify(db.get_global_properties(), [&](global_property_object &_gpo) {
@@ -496,7 +568,7 @@ BOOST_AUTO_TEST_CASE(asset_claim_pool_test_quanta)
       });
 
       // expect to pay out 4.00
-      // fee_pool A: 10.0 - 4.0 - 3.0 = 300      
+      // fee_pool A: 10.0 - 4.0 - 3.0 = 300
       const account_object &quanta_promo = create_account("quanta-promo");
       transfer(committee_account, quanta_promo.get_id(), _core(100));
       upgrade_to_lifetime_member(quanta_promo.get_id());
@@ -506,7 +578,7 @@ BOOST_AUTO_TEST_CASE(asset_claim_pool_test_quanta)
       const account_object &promo_ruser = create_account("promoruser", quanta_promo, quanta_promo);
       transfer(committee_account, promo_ruser.get_id(), _core(100));
       upgrade_to_lifetime_member(promo_ruser.get_id());
-      
+
       //printf("promo? %s", get_account("promo-ruser").registrar)
 
       // trading account is referred promo user

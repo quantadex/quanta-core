@@ -565,6 +565,9 @@ int database::match( const limit_order_object& usd, const limit_order_object& co
          usd_receives = core_receives.multiply_and_round_up( match_price );
    }
 
+   const account_object &maker = core.seller(*this);
+   const account_object &taker = usd.seller(*this);
+
    core_pays = usd_receives;
    usd_pays  = core_receives;
 
@@ -578,7 +581,7 @@ int database::match( const limit_order_object& usd, const limit_order_object& co
 
    if( head_block_time() >= HARDFORK_CORE_QUANTA1_TIME ) {
       // maker seller, taker seller, maker receives, taker receives
-      pay_rebates(core, usd, core_receives, usd_receives);
+      pay_rebates(maker, taker, core_receives, usd_receives);
    }
 
    FC_ASSERT( result != 0 );
@@ -1156,13 +1159,13 @@ asset database::pay_market_fees( const asset_object& recv_asset, const asset& re
 }
 
 // maker seller, taker seller, maker receives, taker receives
-int database::pay_rebates(const limit_order_object &core, const limit_order_object &usd, asset &core_receives, asset &usd_receives)
+int database::pay_rebates(const account_object &maker, const account_object &taker, asset &core_receives, asset &usd_receives)
 {
    const auto &props = get_global_properties();
 
    // lets caculate what taker paid to the fee pool A
-   const account_object &taker = usd.seller(*this);
    const asset_object &recv_asset = usd_receives.asset_id(*this);
+
    asset taker_fee = calculate_market_fee(recv_asset, usd_receives, false);
 
    // ensure we don't pay more than available fee pool
@@ -1184,7 +1187,6 @@ int database::pay_rebates(const limit_order_object &core, const limit_order_obje
       share_type fee = cut_fee(total_available_fees, maker_rebate_fee_excess);
       asset receives = recv_asset.amount(fee);
 
-      const account_object &maker = core.seller(*this);
       adjust_balance(maker.get_id(), receives);
       total_fees_paid += receives.amount.value;
    }

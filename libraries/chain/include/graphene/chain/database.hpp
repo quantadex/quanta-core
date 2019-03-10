@@ -395,7 +395,7 @@ namespace graphene { namespace chain {
 
          asset calculate_market_fee(const asset_object &recv_asset, const asset &trade_amount, bool is_maker);
          asset pay_market_fees( const asset_object& recv_asset, const asset& receives, bool is_maker );
-         int pay_rebates(const limit_order_object &core, const limit_order_object &usd, asset &core_receives, asset &usd_receives);
+         int pay_rebates(const account_object &maker, const account_object &taker, asset &core_receives, asset &usd_receive);
 
          ///@{
          /**

@@ -510,7 +510,7 @@ const asset_object& database_fixture::create_user_issued_asset( const string& na
 }
 
 const asset_object& database_fixture::create_user_issued_asset( const string& name, const account_object& issuer, uint16_t flags,
-                                                                const price& core_exchange_rate, uint16_t precision)
+                                                                const price& core_exchange_rate, uint16_t precision, uint16_t fee)
 {
    asset_create_operation creator;
    creator.issuer = issuer.id;
@@ -520,6 +520,7 @@ const asset_object& database_fixture::create_user_issued_asset( const string& na
    creator.precision = precision;
    creator.common_options.core_exchange_rate = core_exchange_rate;
    creator.common_options.max_supply = GRAPHENE_MAX_SHARE_SUPPLY;
+   creator.common_options.market_fee_percent = fee;
    creator.common_options.flags = flags;
    creator.common_options.issuer_permissions = flags;
    trx.operations.clear();
