@@ -99,9 +99,16 @@ namespace graphene { namespace chain {
           */
          share_type pending_vested_fees;
 
+         class asset_compare {
+         public:
+            inline bool operator()( const asset& a, const asset& b )const
+            {
+               return a.asset_id.instance.value < b.asset_id.instance.value;
+            }
+         };
          struct options_type
          {
-            optional<vector<asset>> referral_fee_paid;
+            optional<flat_set<asset,asset_compare>> referral_fee_paid;
          };
 
          typedef extension <options_type> extensions_type;

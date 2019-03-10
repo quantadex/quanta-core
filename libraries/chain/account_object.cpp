@@ -104,16 +104,24 @@ void account_statistics_object::process_fees(const account_object& a, database& 
    }
 }
 
+        class key_compare {
+        public:
+            inline bool operator()( const public_key_type& a, const public_key_type& b )const
+            {
+                return a.key_data < b.key_data;
+            }
+        };
+
 void account_statistics_object::adjust_referral_paid(asset delta)
 {
    if (delta.amount == 0)
       return;
 
    if (!this->extensions.value.referral_fee_paid.valid()) {
-      this->extensions.value.referral_fee_paid = vector<asset>();
+      this->extensions.value.referral_fee_paid = flat_set<asset,asset_compare>();
    }
 
-   optional<vector<asset>> &balance = this->extensions.value.referral_fee_paid;
+   optional<flat_set<asset,asset_compare>> &balance = this->extensions.value.referral_fee_paid;
 
    auto it = std::find_if(balance->begin(), balance->end(),
                      [&](const asset &target) { return target.asset_id == delta.asset_id; });
@@ -122,7 +130,7 @@ void account_statistics_object::adjust_referral_paid(asset delta)
    {
       *it = *it + delta;
    } else {
-      balance->push_back(delta);
+      balance->insert(delta);
    }
 }
 
