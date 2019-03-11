@@ -23,6 +23,12 @@
  */
 #include <graphene/chain/protocol/custom.hpp>
 
+bool is_number(const std::string& s)
+{
+   return !s.empty() && std::find_if(s.begin(),
+                                     s.end(), [](char c) { return !std::isdigit(c); }) == s.end();
+}
+
 namespace graphene { namespace chain {
 
 void custom_operation::validate()const
@@ -33,5 +39,30 @@ share_type custom_operation::calculate_fee(const fee_parameters_type& k)const
 {
    return k.fee + calculate_data_fee( fc::raw::pack_size(*this), k.price_per_kbyte );
 }
+
+void roll_dice_operation::validate()const
+{
+  FC_ASSERT( fee.amount > 0 );
+  bool is_range_bet = false;
+  if (bet.length() > 0) {
+     if (bet[0] == '>' || bet[0] == '<') {
+        if(is_number(bet.substr(1))) {
+           is_range_bet = true;
+        }
+     }
+  }
+
+  if (numbers.size() == 0) {
+     FC_ASSERT( (bet == "odd") || (bet == "even") || is_range_bet);
+  } else {
+     FC_ASSERT( numbers.size() > 0 && numbers.size() < 100);
+  }
+}
+
+share_type roll_dice_operation::calculate_fee(const fee_parameters_type& k)const
+{
+  return k.fee;
+}
+
 
 } }

@@ -52,7 +52,50 @@ namespace graphene { namespace chain {
       share_type        calculate_fee(const fee_parameters_type& k)const;
    };
 
+   struct roll_dice_operation : public base_operation
+   {
+      struct fee_parameters_type { uint64_t fee = GRAPHENE_BLOCKCHAIN_PRECISION; };
+
+      account_id_type   account_id;
+      asset             fee;
+
+      asset             risk;
+      std::string       bet;   // "odd" , "even", "<n", ">n"
+      flat_set<uint16_t> numbers;
+
+      extensions_type extensions;
+
+      account_id_type fee_payer()const { return account_id; }
+      void            validate()const;
+      share_type        calculate_fee(const fee_parameters_type& k)const;
+
+   };
+
+   struct roll_dice_settle_operation : public base_operation {
+      struct fee_parameters_type { uint64_t fee = GRAPHENE_BLOCKCHAIN_PRECISION; };
+      account_id_type         account_id;
+      uint32_t                block_id;
+      transaction_id_type     tx;
+      uint32_t                op_index;
+
+      asset          risk;
+      uint64_t       outcome;
+      bool           win;
+      asset          payout;
+
+      extensions_type extensions;
+
+      account_id_type fee_payer()const { return account_id; }
+      void            validate()const { FC_ASSERT( !"virtual operation" ); }
+
+      /// This is a virtual operation; there is no fee
+      share_type      calculate_fee(const fee_parameters_type& k)const { return 0; }
+   };
+
 } } // namespace graphene::chain
 
 FC_REFLECT( graphene::chain::custom_operation::fee_parameters_type, (fee)(price_per_kbyte) )
 FC_REFLECT( graphene::chain::custom_operation, (fee)(payer)(required_auths)(id)(data) )
+
+FC_REFLECT( graphene::chain::roll_dice_operation::fee_parameters_type, (fee) )
+FC_REFLECT( graphene::chain::roll_dice_operation, (fee)(account_id)(risk)(bet)(numbers)(extensions) )

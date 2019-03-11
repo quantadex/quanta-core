@@ -256,6 +256,10 @@ struct get_impacted_account_visitor
    {
       _impacted.insert( op.fee_payer() ); // account_id
    }
+   void operator()( const roll_dice_operation& op )
+   {
+       _impacted.insert( op.fee_payer() ); // payer
+   }
 };
 
 void graphene::chain::operation_get_impacted_accounts( const operation& op, flat_set<account_id_type>& result )

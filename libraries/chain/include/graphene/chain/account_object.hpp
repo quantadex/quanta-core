@@ -109,6 +109,7 @@ namespace graphene { namespace chain {
          struct options_type
          {
             optional<flat_set<asset,asset_compare>> referral_fee_paid;
+            optional<uint64_t> number_of_bets;
          };
 
          typedef extension <options_type> extensions_type;
@@ -478,4 +479,4 @@ FC_REFLECT_DERIVED( graphene::chain::account_statistics_object,
                     (pending_fees)(pending_vested_fees)(extensions)
                   )
 
-FC_REFLECT(graphene::chain::account_statistics_object::options_type, (referral_fee_paid))
+FC_REFLECT(graphene::chain::account_statistics_object::options_type, (referral_fee_paid)(number_of_bets))

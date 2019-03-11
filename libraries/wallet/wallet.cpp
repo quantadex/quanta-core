@@ -1049,6 +1049,24 @@ public:
       return sign_transaction( tx, broadcast );
    } FC_CAPTURE_AND_RETHROW( (name) ) }
 
+   signed_transaction roll_dice(string account, string amount_to_bet, string symbol_to_bet, string bet, flat_set<uint16_t> numbers, bool broadcast)
+   { try {
+      FC_ASSERT( !self.is_locked() );
+      account_object account_obj = get_account(account);
+
+      signed_transaction tx;
+      roll_dice_operation op;
+      op.account_id = account_obj.get_id();
+      op.risk = get_asset(symbol_to_bet).amount_from_string(amount_to_bet);
+      op.bet = bet;
+      op.numbers = numbers;
+      tx.operations = {op};
+      set_operation_fees( tx, _remote_db->get_global_properties().parameters.current_fees );
+      tx.validate();
+
+      return sign_transaction( tx, broadcast );
+   } FC_CAPTURE_AND_RETHROW( (account)(amount_to_bet)(symbol_to_bet)(bet)(numbers) ) }
+
 
    // This function generates derived keys starting with index 0 and keeps incrementing
    // the index until it finds a key that isn't registered in the block chain.  To be
@@ -4109,6 +4127,10 @@ map<public_key_type, string> wallet_api::dump_private_keys()
 signed_transaction wallet_api::upgrade_account( string name, bool broadcast )
 {
    return my->upgrade_account(name,broadcast);
+}
+
+signed_transaction wallet_api::roll_dice(string account, string amount_to_bet, string symbol_to_bet, string bet, flat_set<uint16_t> numbers, bool broadcast) {
+   return my->roll_dice(account, amount_to_bet, symbol_to_bet, bet, numbers, broadcast);
 }
 
 signed_transaction wallet_api::sell_asset(string seller_account,

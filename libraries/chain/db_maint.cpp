@@ -1247,4 +1247,20 @@ void database::perform_chain_maintenance(const signed_block& next_block, const g
    process_budget();
 }
 
+void database::settle_roll_dices() {
+   optional<signed_block> block = fetch_block_by_id(head_block_id());
+   if (block.valid()) {
+      uint64_t op_counter = 0;
+      for (auto tx : block->transactions) {
+         for (auto op : tx.operations) {
+            if(op.which() == operation::tag<roll_dice_operation>::value) {
+               auto myop = op.get<roll_dice_operation>();
+               rolldice_evaluator::settle(*this, block->block_num(), tx.id(), op_counter, myop, block->witness_signature);
+            }
+            op_counter++;
+         }
+      }
+   }
+}
+
 } }

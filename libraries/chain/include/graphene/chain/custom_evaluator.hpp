@@ -36,4 +36,16 @@ namespace graphene { namespace chain {
          void_result do_evaluate( const custom_operation& o ){ return void_result(); }
          void_result do_apply( const custom_operation& o ){ return void_result(); }
    };
+
+   class rolldice_evaluator : public evaluator<rolldice_evaluator>
+   {
+   public:
+      typedef roll_dice_operation operation_type;
+
+      void_result do_evaluate( const roll_dice_operation& o );
+      void_result do_apply( const roll_dice_operation& o );
+      static  void settle( database &d, uint32_t block_id, transaction_id_type tx, uint32_t op_index, const roll_dice_operation& o, signature_type blocksig);
+   };
+
+
 } }

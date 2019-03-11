@@ -1012,6 +1012,16 @@ class wallet_api
                                     bool     fill_or_kill = false,
                                     bool     broadcast = false);
 
+      /** Rolls a dice
+       *
+       * @param account the account that is betting and paying for a fee
+       * @param amount_to_bet amount to bet (in nomimal units)
+       * @param symbol_to_bet the name or id of the asset to bet
+       * @bet bet is either "" for numbers bet, >N or <N, or odd or even
+       * @numbers an array of numbers to bet fr
+       */
+      signed_transaction roll_dice(string account, string amount_to_bet, string symbol_to_bet, string bet, flat_set<uint16_t> numbers, bool broadcast = false);
+
       /** Borrow an asset or update the debt/collateral ratio for the loan.
        *
        * This is the first step in shorting an asset.  Call \c sell_asset() to complete the short.
@@ -1856,5 +1866,6 @@ FC_API( graphene::wallet::wallet_api,
         (blind_history)
         (receive_blind_transfer)
         (get_order_book)
+        (roll_dice)
         (quit)
       )
