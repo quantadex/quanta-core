@@ -74,6 +74,8 @@ namespace graphene { namespace chain {
    struct roll_dice_settle_operation : public base_operation {
       struct fee_parameters_type { uint64_t fee = GRAPHENE_BLOCKCHAIN_PRECISION; };
       account_id_type         account_id;
+       asset                     fee;
+
       uint32_t                block_id;
       transaction_id_type     tx;
       uint32_t                op_index;
@@ -82,6 +84,7 @@ namespace graphene { namespace chain {
       uint64_t       outcome;
       bool           win;
       asset          payout;
+      asset          fee_pool;
 
       extensions_type extensions;
 
@@ -99,3 +102,6 @@ FC_REFLECT( graphene::chain::custom_operation, (fee)(payer)(required_auths)(id)(
 
 FC_REFLECT( graphene::chain::roll_dice_operation::fee_parameters_type, (fee) )
 FC_REFLECT( graphene::chain::roll_dice_operation, (fee)(account_id)(risk)(bet)(numbers)(extensions) )
+
+FC_REFLECT( graphene::chain::roll_dice_settle_operation::fee_parameters_type, (fee) )
+FC_REFLECT( graphene::chain::roll_dice_settle_operation, (fee)(account_id)(risk)(outcome)(win)(payout)(fee_pool)(extensions) )
