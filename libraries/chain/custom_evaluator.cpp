@@ -117,7 +117,7 @@ namespace graphene { namespace chain {
 
       float fee_dec = float(fee) / GRAPHENE_100_PERCENT;
 
-      ilog("roll_dice outcome=${o} ${bet} ${data} win=${win} fee=${fee} reward=${reward}", ("bet", op.bet.c_str())("o",randomN)("data", out.str().c_str())("win",win)("fee",*fee)("reward", reward));
+      ilog("roll_dice outcome=${o} ${bet} ${data} win=${win} fee=${fee} reward=${reward}", ("bet", op.bet.c_str())("o",randomN)("data", out.str().c_str())("win",win)("fee",fee)("reward", reward));
 
       asset payout_obj;
       asset fee_pool;
