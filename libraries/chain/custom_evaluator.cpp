@@ -112,8 +112,10 @@ namespace graphene { namespace chain {
          }
       }
 
-      auto fee = d.get_global_properties().parameters.extensions.value.roll_dice_percent_of_fee;
-      float fee_dec = *fee / GRAPHENE_100_PERCENT;
+      uint16_t fee = d.get_global_properties().parameters.extensions.value.roll_dice_percent_of_fee.valid() ?
+              *d.get_global_properties().parameters.extensions.value.roll_dice_percent_of_fee : GRAPHENE_1_PERCENT;
+
+      float fee_dec = float(fee) / GRAPHENE_100_PERCENT;
 
       ilog("roll_dice outcome=${o} ${bet} ${data} win=${win} fee=${fee} reward=${reward}", ("bet", op.bet.c_str())("o",randomN)("data", out.str().c_str())("win",win)("fee",*fee)("reward", reward));
 
