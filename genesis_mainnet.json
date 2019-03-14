@@ -1,0 +1,540 @@
+{
+  "initial_timestamp": "2019-03-13T00:00:00",
+  "max_core_supply": "8648707100000",
+  "initial_parameters": {
+    "current_fees": {
+      "parameters": [[
+        0,{
+          "fee": 2000000,
+          "price_per_kbyte": 1000000
+        }
+      ],[
+        1,{
+          "fee": 500000
+        }
+      ],[
+        2,{
+          "fee": 0
+        }
+      ],[
+        3,{
+          "fee": 2000000
+        }
+      ],[
+        4,{}
+      ],[
+        5,{
+          "basic_fee": 500000,
+          "premium_fee": 200000000,
+          "price_per_kbyte": 100000
+        }
+      ],[
+        6,{
+          "fee": 2000000,
+          "price_per_kbyte": 100000
+        }
+      ],[
+        7,{
+          "fee": 300000
+        }
+      ],[
+        8,{
+          "membership_annual_fee": 200000000,
+          "membership_lifetime_fee": 1000000000
+        }
+      ],[
+        9,{
+          "fee": 50000000
+        }
+      ],[
+        10,{
+          "symbol3": "50000000000",
+          "symbol4": "30000000000",
+          "long_symbol": 500000000,
+          "price_per_kbyte": 10
+        }
+      ],[
+        11,{
+          "fee": 50000000,
+          "price_per_kbyte": 10
+        }
+      ],[
+        12,{
+          "fee": 50000000
+        }
+      ],[
+        13,{
+          "fee": 50000000
+        }
+      ],[
+        14,{
+          "fee": 2000000,
+          "price_per_kbyte": 100000
+        }
+      ],[
+        15,{
+          "fee": 2000000
+        }
+      ],[
+        16,{
+          "fee": 100000
+        }
+      ],[
+        17,{
+          "fee": 10000000
+        }
+      ],[
+        18,{
+          "fee": 50000000
+        }
+      ],[
+        19,{
+          "fee": 100000
+        }
+      ],[
+        20,{
+          "fee": 500000000
+        }
+      ],[
+        21,{
+          "fee": 2000000
+        }
+      ],[
+        22,{
+          "fee": 2000000,
+          "price_per_kbyte": 10
+        }
+      ],[
+        23,{
+          "fee": 2000000,
+          "price_per_kbyte": 10
+        }
+      ],[
+        24,{
+          "fee": 100000
+        }
+      ],[
+        25,{
+          "fee": 100000
+        }
+      ],[
+        26,{
+          "fee": 100000
+        }
+      ],[
+        27,{
+          "fee": 2000000,
+          "price_per_kbyte": 10
+        }
+      ],[
+        28,{
+          "fee": 0
+        }
+      ],[
+        29,{
+          "fee": 500000000
+        }
+      ],[
+        30,{
+          "fee": 2000000
+        }
+      ],[
+        31,{
+          "fee": 100000
+        }
+      ],[
+        32,{
+          "fee": 100000
+        }
+      ],[
+        33,{
+          "fee": 2000000
+        }
+      ],[
+        34,{
+          "fee": 500000000
+        }
+      ],[
+        35,{
+          "fee": 100000,
+          "price_per_kbyte": 10
+        }
+      ],[
+        36,{
+          "fee": 100000
+        }
+      ],[
+        37,{}
+      ],[
+        38,{
+          "fee": 2000000,
+          "price_per_kbyte": 10
+        }
+      ],[
+        39,{
+          "fee": 500000,
+          "price_per_output": 500000
+        }
+      ],[
+        40,{
+          "fee": 500000,
+          "price_per_output": 500000
+        }
+      ],[
+        41,{
+          "fee": 500000
+        }
+      ],[
+        42,{}
+      ],[
+        43,{
+          "fee": 2000000
+        }
+      ],[
+        44,{}
+      ],[
+        45,{
+          "fee": 2000000
+        }
+      ],[
+        46,{}
+      ],[
+        47,{
+          "fee": 2000000
+        }
+      ],[
+        48,{
+          "fee": 2000000
+        }
+      ]
+      ],
+      "scale": 10
+    },
+    "block_interval": 1,
+    "maintenance_interval": 86400,
+    "maintenance_skip_slots": 3,
+    "committee_proposal_review_period": 86400,
+    "maximum_transaction_size": 2048,
+    "maximum_block_size": 2000000,
+    "maximum_time_until_expiration": 86400,
+    "maximum_proposal_lifetime": 2419200,
+    "maximum_asset_whitelist_authorities": 10,
+    "maximum_asset_feed_publishers": 10,
+    "maximum_witness_count": 1001,
+    "maximum_committee_count": 1001,
+    "maximum_authority_membership": 10,
+    "reserve_percent_of_fee": 2000,
+    "network_percent_of_fee": 2000,
+    "lifetime_referrer_percent_of_fee": 3000,
+    "cashback_vesting_period_seconds": 31536000,
+    "cashback_vesting_threshold": 10000000,
+    "count_non_member_votes": true,
+    "allow_non_member_whitelists": false,
+    "witness_pay_per_block": 150,
+    "worker_budget_per_day": "50000000000",
+    "max_predicate_opcode": 1,
+    "fee_liquidation_threshold": 10000000,
+    "accounts_per_fee_scale": 1000,
+    "account_fee_scale_bitshifts": 4,
+    "max_authority_depth": 2,
+    "extensions":
+      {
+        "maker_rebate_percent_of_fee": 5000,
+        "referrer_rebate_percent_of_fee": 3000,
+        "promo_referrer_rebate_percent_of_fee": 4000,
+        "roll_dice_percent_of_fee": 300
+      }
+  },
+  "initial_accounts": [{
+    "name": "quanta-foundation",
+    "owner_key": "QA72kBmxNCcqKWtooQvkC87AQNAQeh2SkFBSuwfPrajU2fCLQSSL",
+    "active_key": "QA72kBmxNCcqKWtooQvkC87AQNAQeh2SkFBSuwfPrajU2fCLQSSL",
+    "is_lifetime_member": true
+  },{
+    "name": "quanta-labs",
+    "owner_key": "QA8Ycfo7cPttWNZM4mZJFqhuLoEEX6Bwp7NRtjcQ5aLGCBbS6VDM",
+    "active_key": "QA8Ycfo7cPttWNZM4mZJFqhuLoEEX6Bwp7NRtjcQ5aLGCBbS6VDM",
+    "is_lifetime_member": true
+  },{
+    "name": "innospring",
+    "owner_key": "QA6c8RLc5W6tJybYwTdnmE1voLAnhg2fi42kir2YQan7e8tW4LuB",
+    "active_key": "QA6c8RLc5W6tJybYwTdnmE1voLAnhg2fi42kir2YQan7e8tW4LuB",
+    "is_lifetime_member": true
+  },{
+    "name": "uva.fund",
+    "owner_key": "QA7Jj4LTitcqpnTscvFdTeSEN8ZjUFJ2Fk8awSxfyxt4szgSC3ZM",
+    "active_key": "QA7Jj4LTitcqpnTscvFdTeSEN8ZjUFJ2Fk8awSxfyxt4szgSC3ZM",
+    "is_lifetime_member": true
+  },{
+    "name": "galaxyfoundation221090",
+    "owner_key": "QA7hru2rWqCqGGXYRdum28XSPcDU9a2UoGMtVB19kr2BYx6Hfb4F",
+    "active_key": "QA7hru2rWqCqGGXYRdum28XSPcDU9a2UoGMtVB19kr2BYx6Hfb4F",
+    "is_lifetime_member": true
+  },{
+    "name": "sfyoshi",
+    "owner_key": "QA6AnfWXcEmfeUC2fXws3GVEjB4cLtjJR6YQMdhboCJk4BW1bApf",
+    "active_key": "QA6AnfWXcEmfeUC2fXws3GVEjB4cLtjJR6YQMdhboCJk4BW1bApf",
+    "is_lifetime_member": true
+  },
+  {
+    "name": "cryptoquoc",
+    "owner_key": "QA4tajffcxUeSnydbSj6J4DxTYPuaC85B2nnqiqTMj63Q5HiCNPE",
+    "active_key": "QA4tajffcxUeSnydbSj6J4DxTYPuaC85B2nnqiqTMj63Q5HiCNPE",
+    "is_lifetime_member": true
+  },
+  {
+    "name": "afonso",
+    "owner_key": "QA6i4jZaof6XbHm1W6UFp7YSVqk1iGABtLFVr5QvRHhUmhCaGo6U",
+    "active_key": "QA6i4jZaof6XbHm1W6UFp7YSVqk1iGABtLFVr5QvRHhUmhCaGo6U",
+    "is_lifetime_member": true
+  },
+  {
+    "name": "timiblossom",
+    "owner_key": "QA8CZuuuhji3Yhg1GR7camrU2TyASzSBJkVEVy2JDYL5rUMS3uMn",
+    "active_key": "QA8CZuuuhji3Yhg1GR7camrU2TyASzSBJkVEVy2JDYL5rUMS3uMn",
+    "is_lifetime_member": true
+  },
+  {
+    "name": "galaxypartner221090",
+    "owner_key": "QA6JHoJ3zUpHMHXQTBE7j84bTWWmrfqcpj9wGSA7KfY6MhY3182A",
+    "active_key": "QA6JHoJ3zUpHMHXQTBE7j84bTWWmrfqcpj9wGSA7KfY6MhY3182A",
+    "is_lifetime_member": true
+  },
+  {
+    "name": "crosschain",
+    "owner_key": "QA6GrKPchj4Cd43CVeQHHt5eBmJJbvY8tC1t7GVoxowDUebcXAWA",
+    "active_key": "QA6GrKPchj4Cd43CVeQHHt5eBmJJbvY8tC1t7GVoxowDUebcXAWA",
+    "is_lifetime_member": true
+  },
+  {
+    "name": "bitcherry-witness",
+    "owner_key": "QA7Rwbg98WGyPXzCXki8MeiEwyMQFmBoh4DTiKA8bSQN918nPd6Y",
+    "active_key": "QA7Rwbg98WGyPXzCXki8MeiEwyMQFmBoh4DTiKA8bSQN918nPd6Y",
+    "is_lifetime_member": true
+  },
+  {
+    "name": "clockbound-witness",
+    "owner_key": "QA6CGLAWV1v7hmMtCEHtyEwXBYWMyXdKbrkdXp7TrtkY2MhTLMAH",
+    "active_key": "QA6CGLAWV1v7hmMtCEHtyEwXBYWMyXdKbrkdXp7TrtkY2MhTLMAH",
+    "is_lifetime_member": true
+  },
+  {
+    "name": "finantra-witness",
+    "owner_key": "QA8g4QWCPZJ8N6pW9HKvqv9Q7LzEi9T3mhHtPMMjPGigSzZ2Ucnn",
+    "active_key": "QA8g4QWCPZJ8N6pW9HKvqv9Q7LzEi9T3mhHtPMMjPGigSzZ2Ucnn",
+    "is_lifetime_member": true
+  },
+    {
+      "name": "sunshine-witness",
+      "owner_key": "QA845SWY1JELGE5hBcwCTR1JcPeaJBzvBLKvCF5WHimza2zafRoA",
+      "active_key": "QA845SWY1JELGE5hBcwCTR1JcPeaJBzvBLKvCF5WHimza2zafRoA",
+      "is_lifetime_member": true
+    },
+    {
+      "name": "galaxyfoundationbp",
+      "owner_key": "QA7KyzvNweGy9EeyrK7Soj2s51isj2LkSjGDyprYZQm1omMLCPN2",
+      "active_key": "QA7KyzvNweGy9EeyrK7Soj2s51isj2LkSjGDyprYZQm1omMLCPN2",
+      "is_lifetime_member": true
+    },
+
+
+    {"name": "presale9", "owner_key": "QA5aAEyaw7i7fRbTJdnYPS17t7GjjoYKvhishPLaaWbqwE67aN58", "active_key": "QA5aAEyaw7i7fRbTJdnYPS17t7GjjoYKvhishPLaaWbqwE67aN58", "is_lifetime_member": true},
+    {"name": "tokensale", "owner_key": "QA5aZYtxPDGg66vz8VreM35FkwcWfadW45kQUJ8ExQwfEJ6pZ3s1", "active_key": "QA5aZYtxPDGg66vz8VreM35FkwcWfadW45kQUJ8ExQwfEJ6pZ3s1", "is_lifetime_member": true},
+    {"name": "presale2", "owner_key": "QA4xGKTznXswjmNMb1xbo7k5h6KLC5Q11z7HFGtukiupbKvCEjw3", "active_key": "QA4xGKTznXswjmNMb1xbo7k5h6KLC5Q11z7HFGtukiupbKvCEjw3", "is_lifetime_member": true},
+    {"name": "presale23", "owner_key": "QA7G1gmVr4474LL3cwqpHRAZ1EXfHkvqZsYibGYxPHihx9i2nPvP", "active_key": "QA7G1gmVr4474LL3cwqpHRAZ1EXfHkvqZsYibGYxPHihx9i2nPvP", "is_lifetime_member": true},
+    {"name": "presale30", "owner_key": "QA7bjkR8zij2vA1rhnVi4Q6aWmJDeNVaT4TxqBUtnUCYifvVH4nZ", "active_key": "QA7bjkR8zij2vA1rhnVi4Q6aWmJDeNVaT4TxqBUtnUCYifvVH4nZ", "is_lifetime_member": true},
+    {"name": "presale11", "owner_key": "QA5tKZrsFswZFyKjfEtPSvrhCajtTrreXdQfR25eLoeZ2L5hWfU6", "active_key": "QA5tKZrsFswZFyKjfEtPSvrhCajtTrreXdQfR25eLoeZ2L5hWfU6", "is_lifetime_member": true},
+    {"name": "presale4", "owner_key": "QA5GwSqHxWvPUGpCsdBvyJ6Cnsfx1hzJg8W7yGg9ePYRvDjrKmbJ", "active_key": "QA5GwSqHxWvPUGpCsdBvyJ6Cnsfx1hzJg8W7yGg9ePYRvDjrKmbJ", "is_lifetime_member": true},
+    {"name": "presale37", "owner_key": "QA8Yg11tdNac9nE9tKC6doZTAbEAep6QSgKntWapUqXUwhdZekFz", "active_key": "QA8Yg11tdNac9nE9tKC6doZTAbEAep6QSgKntWapUqXUwhdZekFz", "is_lifetime_member": true},
+    {"name": "presale25", "owner_key": "QA7S3Zgo1kbPBfUVZdhWc88oKvjKHDL6XAdHVGG8FtMQGKsZ4SFp", "active_key": "QA7S3Zgo1kbPBfUVZdhWc88oKvjKHDL6XAdHVGG8FtMQGKsZ4SFp", "is_lifetime_member": true},
+    {"name": "presale7", "owner_key": "QA5KHsfRcDd15vLoMLmZtWAcZt53gYXXHCZe8oPbC8qxrr5abQfi", "active_key": "QA5KHsfRcDd15vLoMLmZtWAcZt53gYXXHCZe8oPbC8qxrr5abQfi", "is_lifetime_member": true},
+    {"name": "presale15", "owner_key": "QA5yraZntb25CvWQLMpkFYDvxn82xk3J9KchPmddLhth5UUK8dRq", "active_key": "QA5yraZntb25CvWQLMpkFYDvxn82xk3J9KchPmddLhth5UUK8dRq", "is_lifetime_member": true},
+    {"name": "presale22", "owner_key": "QA6w8cjBcQTzhw2WErWEAbU3Qzn5nz8R7eoB3sdM15Dk7wUmp1wf", "active_key": "QA6w8cjBcQTzhw2WErWEAbU3Qzn5nz8R7eoB3sdM15Dk7wUmp1wf", "is_lifetime_member": true},
+    {"name": "presale27", "owner_key": "QA7UNyePsQVkyzCHabPEupufJNVrLiEPSNfFfXi2TBrSZehjgEPb", "active_key": "QA7UNyePsQVkyzCHabPEupufJNVrLiEPSNfFfXi2TBrSZehjgEPb", "is_lifetime_member": true},
+    {"name": "presale29", "owner_key": "QA7WBruEnGmnfAehcPZ7vVdgDjQDNRDN8kCMA5XVpsp3vwz9WGgV", "active_key": "QA7WBruEnGmnfAehcPZ7vVdgDjQDNRDN8kCMA5XVpsp3vwz9WGgV", "is_lifetime_member": true},
+    {"name": "presale13", "owner_key": "QA5tvq4qojwYZ3GN8y3DLpFnGek73GHffcM4ijUEGnF5TMiVZxwQ", "active_key": "QA5tvq4qojwYZ3GN8y3DLpFnGek73GHffcM4ijUEGnF5TMiVZxwQ", "is_lifetime_member": true},
+    {"name": "presale14", "owner_key": "QA5wL8Bf7Fye7YNVEcSgNFvsGkAdeN1GRGzySxeFcchfA8kC8o5B", "active_key": "QA5wL8Bf7Fye7YNVEcSgNFvsGkAdeN1GRGzySxeFcchfA8kC8o5B", "is_lifetime_member": true},
+    {"name": "presale19", "owner_key": "QA6nks933dnBQrgHP1wfPy3iFEQo3N2ScrBCnKrX6BVFqZLaA9eo", "active_key": "QA6nks933dnBQrgHP1wfPy3iFEQo3N2ScrBCnKrX6BVFqZLaA9eo", "is_lifetime_member": true},
+    {"name": "presale6", "owner_key": "QA5J67BkjdvYh8QWVSppf4vx3EK1pKUor4LqKdZjRYvzbPBub9QG", "active_key": "QA5J67BkjdvYh8QWVSppf4vx3EK1pKUor4LqKdZjRYvzbPBub9QG", "is_lifetime_member": true},
+    {"name": "presale21", "owner_key": "QA6qboX7RMcSjLVE7ntJw5kqFsLi6R48Ry2LjQK4kNpUr3gZ3anW", "active_key": "QA6qboX7RMcSjLVE7ntJw5kqFsLi6R48Ry2LjQK4kNpUr3gZ3anW", "is_lifetime_member": true},
+    {"name": "presale34", "owner_key": "QA7fk8vffU3hyJaqMWyRuAYZf3xRRncnieHUu4F3V1aWtroYK4yq", "active_key": "QA7fk8vffU3hyJaqMWyRuAYZf3xRRncnieHUu4F3V1aWtroYK4yq", "is_lifetime_member": true},
+    {"name": "presale36", "owner_key": "QA8K519HPP1hchYjUdjnH8GEowHwXW64d89LDsVP61HFjqNZD4a6", "active_key": "QA8K519HPP1hchYjUdjnH8GEowHwXW64d89LDsVP61HFjqNZD4a6", "is_lifetime_member": true},
+    {"name": "presale12", "owner_key": "QA5thbEqowV2vaGzYRZyt5X2uHY4Fmc5q7kCn2LJdM9AtWw34FwR", "active_key": "QA5thbEqowV2vaGzYRZyt5X2uHY4Fmc5q7kCn2LJdM9AtWw34FwR", "is_lifetime_member": true},
+    {"name": "presale1", "owner_key": "QA4x5Rg8eCXG38hbJwZn3d6e44SW7xVyC1fadfnju8s5ozDy9a8p", "active_key": "QA4x5Rg8eCXG38hbJwZn3d6e44SW7xVyC1fadfnju8s5ozDy9a8p", "is_lifetime_member": true},
+    {"name": "presale26", "owner_key": "QA7U3a33HoKiRJvu8EVB9ZxQHWv7xk4QXA8d1raSmJzLeMb1vLNK", "active_key": "QA7U3a33HoKiRJvu8EVB9ZxQHWv7xk4QXA8d1raSmJzLeMb1vLNK", "is_lifetime_member": true},
+    {"name": "presale17", "owner_key": "QA6UiGCrHRB8ANTwd3wXN7tt5JsHcD6uHWio41rZFfLcuE31DNcq", "active_key": "QA6UiGCrHRB8ANTwd3wXN7tt5JsHcD6uHWio41rZFfLcuE31DNcq", "is_lifetime_member": true},
+    {"name": "presale18", "owner_key": "QA6YJ7AAfDtrDaN6VAzdyFVznF6Vpi9DahWfYD93f1EvumcCBepv", "active_key": "QA6YJ7AAfDtrDaN6VAzdyFVznF6Vpi9DahWfYD93f1EvumcCBepv", "is_lifetime_member": true},
+    {"name": "presale3", "owner_key": "QA5DAnaz1BxDzxRX7CL17devQFNXqoTWW5qwzjk6u17ULWbVc3kX", "active_key": "QA5DAnaz1BxDzxRX7CL17devQFNXqoTWW5qwzjk6u17ULWbVc3kX", "is_lifetime_member": true},
+    {"name": "presale39", "owner_key": "QA8euVq13Z9ijEGUvc513YszCd4BhpSzMTtaG4ffPDRyCy4Aj1cf", "active_key": "QA8euVq13Z9ijEGUvc513YszCd4BhpSzMTtaG4ffPDRyCy4Aj1cf", "is_lifetime_member": true},
+    {"name": "presale16", "owner_key": "QA6LsD9MHrHKDUr82ksGHF2FmcuutVS7UzTZVYLCxAnYKP4oyUFk", "active_key": "QA6LsD9MHrHKDUr82ksGHF2FmcuutVS7UzTZVYLCxAnYKP4oyUFk", "is_lifetime_member": true},
+    {"name": "presale38", "owner_key": "QA8ar2o4FSe3FeHm6i1WJLbrNquxtpjcKXLWZ5Lod4iAggEN6Ysb", "active_key": "QA8ar2o4FSe3FeHm6i1WJLbrNquxtpjcKXLWZ5Lod4iAggEN6Ysb", "is_lifetime_member": true},
+    {"name": "presale35", "owner_key": "QA7udxn67Et1C9VsTFQtVVaq8fx69tB8LFkPp2cWEXYHAH6a56Lv", "active_key": "QA7udxn67Et1C9VsTFQtVVaq8fx69tB8LFkPp2cWEXYHAH6a56Lv", "is_lifetime_member": true},
+    {"name": "presale5", "owner_key": "QA5HThw9PGmmEWaYW1b8sFWGXY4S6KkZAcip2CD7TjwdJxpUcypE", "active_key": "QA5HThw9PGmmEWaYW1b8sFWGXY4S6KkZAcip2CD7TjwdJxpUcypE", "is_lifetime_member": true},
+    {"name": "presale24", "owner_key": "QA7HbzSd4yJxr9af2PZGakmzQ4iMmEf6tpN2bHm5QKBqW1D2bqee", "active_key": "QA7HbzSd4yJxr9af2PZGakmzQ4iMmEf6tpN2bHm5QKBqW1D2bqee", "is_lifetime_member": true},
+    {"name": "presale8", "owner_key": "QA5Lk5YkEe6TNNHfUZgnU8CM7vHx2EYnqEAY2axZ2W7FfYQthdnV", "active_key": "QA5Lk5YkEe6TNNHfUZgnU8CM7vHx2EYnqEAY2axZ2W7FfYQthdnV", "is_lifetime_member": true},
+    {"name": "presale10", "owner_key": "QA5d3YU5rKV9ev566gXhgZMs1iuFRmWgZHZF5FSk96r3EsZiYF8x", "active_key": "QA5d3YU5rKV9ev566gXhgZMs1iuFRmWgZHZF5FSk96r3EsZiYF8x", "is_lifetime_member": true},
+    {"name": "presale33", "owner_key": "QA7csEQjcuCZQ6itoB5RT1Xdnd8n4qQ3zNZxhZ9JPa54wxN3Crts", "active_key": "QA7csEQjcuCZQ6itoB5RT1Xdnd8n4qQ3zNZxhZ9JPa54wxN3Crts", "is_lifetime_member": true}
+  ],
+  "initial_assets": [{
+    "accumulated_fees": 0,
+    "collateral_records": [],
+    "description": "BTC Crosschain asset",
+    "is_bitasset": false,
+    "issuer_name": "crosschain",
+    "max_supply": 1000000000000,
+    "precision": 5,
+    "symbol": "BTC"
+  },
+  {
+    "accumulated_fees": 0,
+    "collateral_records": [],
+    "description": "BTC Crosschain asset",
+    "is_bitasset": false,
+    "issuer_name": "crosschain",
+    "max_supply": 1000000000000,
+    "precision": 5,
+    "symbol": "BCH"
+  },
+  {
+    "accumulated_fees": 0,
+    "collateral_records": [],
+    "description": "BTC Crosschain asset",
+    "is_bitasset": false,
+    "issuer_name": "crosschain",
+    "max_supply": 1000000000000,
+    "precision": 5,
+    "symbol": "LTC"
+  },
+  {
+    "accumulated_fees": 0,
+    "collateral_records": [],
+    "description": "ETH Crosschain asset",
+    "is_bitasset": false,
+    "issuer_name": "crosschain",
+    "max_supply": 1000000000000,
+    "precision": 5,
+    "symbol": "ETH"
+  }],
+  "initial_balances": [
+    {"amount": 4753443, "asset_symbol": "QDEX", "owner": "QALshQ69gUGa5qufBxzPNZRcr1zhfSAwSNU"},
+    {"amount": 4296670, "asset_symbol": "QDEX", "owner": "QA6PeN3BXoorj5BP1Ai9HCSvpdtyGfQYRBB"},
+    {"amount": 357142730, "asset_symbol": "QDEX", "owner": "QAMZL8FxeXgo4c15NdxKMCifg78xU8PdaV4"},
+    {"amount": 99320571, "asset_symbol": "QDEX", "owner": "QAMZL8FxeXgo4c15NdxKMCifg78xU8PdaV4"},
+    {"amount": 7520514, "asset_symbol": "QDEX", "owner": "QACNNryV3MJbUmzKH4e6wJjFD63BFwRiT6P"},
+    {"amount": 17029952, "asset_symbol": "QDEX", "owner": "QA6PeN3BXoorj5BP1Ai9HCSvpdtyGfQYRBB"},
+    {"amount": 9525257, "asset_symbol": "QDEX", "owner": "QA6PeN3BXoorj5BP1Ai9HCSvpdtyGfQYRBB"},
+    {"amount": 64787711, "asset_symbol": "QDEX", "owner": "QAF49mN5cqLjwswTvr1HJokiRmZyJf35bdy"},
+    {"amount": 4758922, "asset_symbol": "QDEX", "owner": "QA6ccAGjfX8cr7ffMbtqSzGYv8MRtg2uNWT"},
+    {"amount": 475417, "asset_symbol": "QDEX", "owner": "QALshQ69gUGa5qufBxzPNZRcr1zhfSAwSNU"},
+    {"amount": 4764278, "asset_symbol": "QDEX", "owner": "QA6PeN3BXoorj5BP1Ai9HCSvpdtyGfQYRBB"},
+    {"amount": 7000752, "asset_symbol": "QDEX", "owner": "QA45ot8BUxkUJGjHYuaD97BW4XXiv2DoATG"},
+    {"amount": 4769308, "asset_symbol": "QDEX", "owner": "QA61EQiWbULe4WZ83ifpNLTVj2ZAM39kSnC"},
+    {"amount": 241783, "asset_symbol": "QDEX", "owner": "QAJMXGPhiEQqdr2ZMwBw19vC5bJcQhWkdeB"},
+    {"amount": 14284690, "asset_symbol": "QDEX", "owner": "QA2XFj2oZnEXT6jqSgF65emsKTCi6fSTPPB"},
+    {"amount": 967259, "asset_symbol": "QDEX", "owner": "QA558hPMm4bbUKYXthS5AcP1q2gKELjTsTx"},
+    {"amount": 482930, "asset_symbol": "QDEX", "owner": "QAAxptyos25Wq8rXXAFBpPyr3mnwhbnMXV2"},
+    {"amount": 9377761, "asset_symbol": "QDEX", "owner": "QADCn2aFeCDQLiHyLL23HsK4JWZ7mMo4uV9"},
+    {"amount": 30259, "asset_symbol": "QDEX", "owner": "QA6PeN3BXoorj5BP1Ai9HCSvpdtyGfQYRBB"},
+    {"amount": 95518, "asset_symbol": "QDEX", "owner": "QAMCdRy5ExxkNs4m3EbiiBM6r45J4XLEUaa"},
+    {"amount": 2375594, "asset_symbol": "QDEX", "owner": "QA8USewAP4jFWETyBRtEWBZtS51mXTRUCLK"},
+    {"amount": 3184329, "asset_symbol": "QDEX", "owner": "QADCn2aFeCDQLiHyLL23HsK4JWZ7mMo4uV9"},
+    {"amount": 489546, "asset_symbol": "QDEX", "owner": "QAMrM7Z78gJN6PYBn29QV42MXQvavaYFMq9"},
+    {"amount": 460187, "asset_symbol": "QDEX", "owner": "QANs6avLaRAAxq2wk1DWn7YjYL1xkTRxf6G"},
+    {"amount": 574507, "asset_symbol": "QDEX", "owner": "QA7NSpQd6JmqSyjE16V92t6JZNnhZY2RcDL"},
+    {"amount": 118091762, "asset_symbol": "QDEX", "owner": "QACeCccBxWhjqeVDgi3u34kdQujPR7ZGchA"},
+    {"amount": 283830310, "asset_symbol": "QDEX", "owner": "QA2rBxhoB16Pc7VzGaciEXNa4YyL3JkDwQL"},
+    {"amount": 2458500, "asset_symbol": "QDEX", "owner": "QA6PeN3BXoorj5BP1Ai9HCSvpdtyGfQYRBB"},
+    {"amount": 475854, "asset_symbol": "QDEX", "owner": "QA6PeN3BXoorj5BP1Ai9HCSvpdtyGfQYRBB"},
+    {"amount": 2377302, "asset_symbol": "QDEX", "owner": "QA6PeN3BXoorj5BP1Ai9HCSvpdtyGfQYRBB"},
+    {"amount": 500124, "asset_symbol": "QDEX", "owner": "QA9i5EcYaFPBiFmfwe5RnD5hJoY5QgbR7hB"},
+    {"amount": 1954758, "asset_symbol": "QDEX", "owner": "QAEZ79xnbMYyVdAtj3LcoJSRTc26QttGTPW"},
+    {"amount": 96266, "asset_symbol": "QDEX", "owner": "QA6PeN3BXoorj5BP1Ai9HCSvpdtyGfQYRBB"},
+    {"amount": 1123042, "asset_symbol": "QDEX", "owner": "QA6PeN3BXoorj5BP1Ai9HCSvpdtyGfQYRBB"},
+    {"amount": 317008, "asset_symbol": "QDEX", "owner": "QA91xTR6LuTQUJY5JfFaVWvkqVYFhoS2YhW"},
+    {"amount": 107419, "asset_symbol": "QDEX", "owner": "QA6PeN3BXoorj5BP1Ai9HCSvpdtyGfQYRBB"},
+    {"amount": 190839, "asset_symbol": "QDEX", "owner": "QANHRt2XU6ni8EhdPXNr25WrmEtvY9p4coJ"},
+    {"amount": 480201, "asset_symbol": "QDEX", "owner": "QAEU7PhHGBo1D6SQFvZBhBmS3eE9THtFfEC"},
+    {"amount": 279953, "asset_symbol": "QDEX", "owner": "QA9259SqpLpJ2C7AnsU3uF85hvERNyr1YzB"},
+    {"amount": 4273650, "asset_symbol": "QDEX", "owner": "QA58kcDQmY8E5VBVNXW8PFwBqqKRXFgh2ng"},
+    {"amount": 127616390, "asset_symbol": "QDEX", "owner": "QAF49mN5cqLjwswTvr1HJokiRmZyJf35bdy"},
+    {"amount": 1522759, "asset_symbol": "QDEX", "owner": "QA6PeN3BXoorj5BP1Ai9HCSvpdtyGfQYRBB"},
+    {"amount": 9537401, "asset_symbol": "QDEX", "owner": "QA2JPXMWyGKkUu1NChK9LoKnRcQXSdCQYs2"},
+    {"amount": 11908708, "asset_symbol": "QDEX", "owner": "QAJLN8tZ6QVUhm6E1wTSPRtShPBhB849cWB"},
+    {"amount": 119475, "asset_symbol": "QDEX", "owner": "QA7j8XahcVwzoGYgURbtrrwVp3uSxSS2AvL"},
+    {"amount": 100951899, "asset_symbol": "QDEX", "owner": "QAMLHF6vUk3SD9neUJg6j3zTKh4UPwNpZHM"},
+    {"amount": 212379656, "asset_symbol": "QDEX", "owner": "QAMLHF6vUk3SD9neUJg6j3zTKh4UPwNpZHM"},
+    {"amount": 240174, "asset_symbol": "QDEX", "owner": "QA8oGyqenjkoUzRmPqvPktf9bPUZ7ozSMCL"},
+    {"amount": 235168, "asset_symbol": "QDEX", "owner": "QA6PeN3BXoorj5BP1Ai9HCSvpdtyGfQYRBB"},
+    {"amount": 95220, "asset_symbol": "QDEX", "owner": "QA6PeN3BXoorj5BP1Ai9HCSvpdtyGfQYRBB"},
+    {"amount": 2001013, "asset_symbol": "QDEX", "owner": "QACmKDs96FsjF3SHvKBtoZ3xosKdLD3WM12"},
+    {"amount": 3104357, "asset_symbol": "QDEX", "owner": "QA7JVqyu8Fa97ZgyqfDYvXzsjxTqHLLh1Bg"},
+    {"amount": 2584373, "asset_symbol": "QDEX", "owner": "QANs6avLaRAAxq2wk1DWn7YjYL1xkTRxf6G"},
+    {"amount": 18253396, "asset_symbol": "QDEX", "owner": "QACeUaLYJvsQ4FfL8qLd7SAN2Kuri7msthd"},
+    {"amount": 106310404, "asset_symbol": "QDEX", "owner": "QAF49mN5cqLjwswTvr1HJokiRmZyJf35bdy"},
+    {"amount": 101684, "asset_symbol": "QDEX", "owner": "QAHNGGPyeF5gthhgrBAjKA3oPnVYcvhMeVq"},
+
+    {"amount": 31250000000, "asset_symbol": "QDEX", "owner": "QAHg2D4nNSwho1nvYXwdRq2yyJEMHkF4Tbu"},
+    {"amount": 22968750000, "asset_symbol": "QDEX", "owner": "QA7HrJqwGn42EgC3WNyFEgGLRHWmRLncrxJ"},
+    {"amount": 20416662500, "asset_symbol": "QDEX", "owner": "QAJVuXibosv6AT1fjgheW69TP8TqeynsVx1"},
+    {"amount": 5208337500, "asset_symbol": "QDEX", "owner": "QA7tGYTox9U78Gdb8e28Tagb4fySTZV2GiV"},
+    {"amount": 1058042244, "asset_symbol": "QDEX", "owner": "QA6PeN3BXoorj5BP1Ai9HCSvpdtyGfQYRBB"},
+    {"amount": 66666666669, "asset_symbol": "QDEX", "owner": "QA3u6MbjhpbfuZ2Q6RZyoSMfcSsx7erQm7L"},
+    {"amount": 52174666670, "asset_symbol": "QDEX", "owner": "QAPvXUifvWMUpbx4uqHYvoomNi2uUisA4TG"},
+    {"amount": 3500000000, "asset_symbol": "QDEX", "owner": "QAQ9Nv6gD9jnP1rdVcPxvFvDqsbAYfeBjo1"},
+    {"amount": 937500000, "asset_symbol": "QDEX", "owner": "QAG56g7GwjdLa7m8vNS53u2a6ivpD9r4xw3"},
+    {"amount": 937500000, "asset_symbol": "QDEX", "owner": "QAMNqWwGNPvSCaireNYbmpGD1KP4v2bma9j"},
+    {"amount": 9405000000, "asset_symbol": "QDEX", "owner": "QA8cgyrzTcm9X9pSehUhz27Kvd7fbKE3Y9Z"},
+    {"amount": 21450000000, "asset_symbol": "QDEX", "owner": "QAJAskKzhn2fqqF6bWXgM8kEkDCmVjh9SUL"}
+  ],
+  "initial_vesting_balances": [
+    {"begin_balance": 0, "amount": 218750000000, "asset_symbol": "QDEX", "begin_timestamp": "2019-03-13T00:00:00", "owner": "QAHg2D4nNSwho1nvYXwdRq2yyJEMHkF4Tbu", "vesting_duration_seconds": "15552000"},
+    {"begin_balance": 0, "amount": 160781300000, "asset_symbol": "QDEX", "begin_timestamp": "2019-03-13T00:00:00", "owner": "QA7HrJqwGn42EgC3WNyFEgGLRHWmRLncrxJ", "vesting_duration_seconds": "15552000"},
+    {"begin_balance": 0, "amount": 142916600000, "asset_symbol": "QDEX", "begin_timestamp": "2019-03-13T00:00:00", "owner": "QAJVuXibosv6AT1fjgheW69TP8TqeynsVx1", "vesting_duration_seconds": "15552000"},
+    {"begin_balance": 0, "amount": 36458400000, "asset_symbol": "QDEX", "begin_timestamp": "2019-03-13T00:00:00", "owner": "QA7tGYTox9U78Gdb8e28Tagb4fySTZV2GiV", "vesting_duration_seconds": "15552000"},
+    {"begin_balance": 0, "amount": 7406300000, "asset_symbol": "QDEX", "begin_timestamp": "2019-03-13T00:00:00", "owner": "QA6PeN3BXoorj5BP1Ai9HCSvpdtyGfQYRBB", "vesting_duration_seconds": "15552000"},
+    {"begin_balance": 0, "amount": 3933333300000, "asset_symbol": "QDEX", "begin_timestamp": "2019-03-13T00:00:00", "owner": "QA3u6MbjhpbfuZ2Q6RZyoSMfcSsx7erQm7L", "vesting_duration_seconds": "155520000"},
+    {"begin_balance": 0, "amount": 3078305300000, "asset_symbol": "QDEX", "begin_timestamp": "2019-03-13T00:00:00", "owner": "QAPvXUifvWMUpbx4uqHYvoomNi2uUisA4TG", "vesting_duration_seconds": "155520000"},
+    {"begin_balance": 0, "amount": 80500000000, "asset_symbol": "QDEX", "begin_timestamp": "2019-03-13T00:00:00", "owner": "QAQ9Nv6gD9jnP1rdVcPxvFvDqsbAYfeBjo1", "vesting_duration_seconds": "62208000"},
+    {"begin_balance": 0, "amount": 21562500000, "asset_symbol": "QDEX", "begin_timestamp": "2019-03-13T00:00:00", "owner": "QAG56g7GwjdLa7m8vNS53u2a6ivpD9r4xw3", "vesting_duration_seconds": "15552000"},
+    {"begin_balance": 0, "amount": 21562500000, "asset_symbol": "QDEX", "begin_timestamp": "2019-03-13T00:00:00", "owner": "QAMNqWwGNPvSCaireNYbmpGD1KP4v2bma9j", "vesting_duration_seconds": "15552000"},
+    {"begin_balance": 0, "amount": 216315000000, "asset_symbol": "QDEX", "begin_timestamp": "2019-03-13T00:00:00", "owner": "QA8cgyrzTcm9X9pSehUhz27Kvd7fbKE3Y9Z", "vesting_duration_seconds": "62208000"},
+    {"begin_balance": 0, "amount": 493350000000, "asset_symbol": "QDEX", "begin_timestamp": "2019-03-13T00:00:00", "owner": "QAJAskKzhn2fqqF6bWXgM8kEkDCmVjh9SUL", "vesting_duration_seconds": "62208000"}
+  ],
+  "initial_active_witnesses": 6,
+  "initial_witness_candidates": [{
+    "owner_name": "quanta-foundation",
+    "block_signing_key": "QA57P4GhxnUKDHMtPvZFGf5n4VhZjFRqMkb9JAsecmsouTE1oLuB"
+  },{
+    "owner_name": "bitcherry-witness",
+    "block_signing_key": "QA7Rwbg98WGyPXzCXki8MeiEwyMQFmBoh4DTiKA8bSQN918nPd6Y"
+  },{
+    "owner_name": "clockbound-witness",
+    "block_signing_key": "QA6CGLAWV1v7hmMtCEHtyEwXBYWMyXdKbrkdXp7TrtkY2MhTLMAH"
+  },{
+    "owner_name": "finantra-witness",
+    "block_signing_key": "QA8g4QWCPZJ8N6pW9HKvqv9Q7LzEi9T3mhHtPMMjPGigSzZ2Ucnn"
+  },{
+    "owner_name": "sunshine-witness",
+    "block_signing_key": "QA845SWY1JELGE5hBcwCTR1JcPeaJBzvBLKvCF5WHimza2zafRoA"
+  },{
+    "owner_name": "galaxyfoundationbp",
+    "block_signing_key": "QA7KyzvNweGy9EeyrK7Soj2s51isj2LkSjGDyprYZQm1omMLCPN2"
+  }
+  ],
+  "initial_committee_candidates": [{
+    "owner_name": "quanta-foundation"
+  },{
+    "owner_name": "quanta-labs"
+  },{
+    "owner_name": "galaxyfoundation221090"
+  }
+  ],
+  "initial_worker_candidates": [],
+  "initial_chain_id": "aa34045518f1469a28fa4578240d5f039afa9959c0b95ce3b39674efa691fb21",
+  "immutable_parameters": {
+    "min_committee_member_count": 3,
+    "min_witness_count": 5,
+    "num_special_accounts": 0,
+    "num_special_assets": 0
+  }
+}
