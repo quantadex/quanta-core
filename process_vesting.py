@@ -14,7 +14,7 @@ with open('./data/genesis_vesting.csv') as csvfile:
 
         shortAddr = str(Account.PublicKey(row["QuantaPubKey"], "QA").address)
         tx = {
-                "begin_balance": 0,
+                "begin_balance": qdex(float(row["Amount"].replace(",",""))),
                  "amount": qdex(float(row["Amount"].replace(",",""))),
                  "asset_symbol": "QDEX",
                  "begin_timestamp": "2019-03-13T00:00:00",

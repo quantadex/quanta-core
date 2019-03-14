@@ -21,9 +21,11 @@ with open('./data/genesis_worksheet.csv') as csvfile:
 with open('./data/genesis_worksheet.csv') as csvfile:
     c = csv.DictReader(csvfile, delimiter=',')
     for row in c:
+        if row["AccountID"] == "":
+            continue
         shortAddr = str(Account.PublicKey(row["QUANTA Addr"], "QA").address)
         tx = {
-                 "amount": int(float(row["QDEX Tokens"])*100000),
+                 "amount": int(float(row["QDEXTokens"])*100000),
                  "asset_symbol": "QDEX",
                  "owner": shortAddr
              }
