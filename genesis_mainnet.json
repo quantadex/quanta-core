@@ -1,6 +1,6 @@
 {
   "initial_timestamp": "2019-03-13T00:00:00",
-  "max_core_supply": "8648802400000",
+  "max_core_supply": "8700000000000",
   "initial_parameters": {
     "current_fees": {
       "parameters": [[
@@ -283,6 +283,24 @@
     "is_lifetime_member": true
   },
   {
+    "name": "long",
+    "owner_key": "QA56izjYCPjEGq8hESSqEsMiukt2LJWTf3uwF5HnSBxyKLuogFG7",
+    "active_key": "QA56izjYCPjEGq8hESSqEsMiukt2LJWTf3uwF5HnSBxyKLuogFG7",
+    "is_lifetime_member": true
+  },
+  {
+    "name": "pooja",
+    "owner_key": "QA57Cg8XGxKCGT2FRPpCe6fjqPJesKBEPCo8e5mCV34r3vnEv7PX",
+    "active_key": "QA57Cg8XGxKCGT2FRPpCe6fjqPJesKBEPCo8e5mCV34r3vnEv7PX",
+    "is_lifetime_member": true
+  },
+  {
+    "name": "chipper",
+    "owner_key": "QA8Di72nYvM27uvF6cEayewqRtQRFmfBRdPHafFfrKcq2s7UupXg",
+    "active_key": "QA8Di72nYvM27uvF6cEayewqRtQRFmfBRdPHafFfrKcq2s7UupXg",
+    "is_lifetime_member": true
+  },
+  {
     "name": "afonso",
     "owner_key": "QA6i4jZaof6XbHm1W6UFp7YSVqk1iGABtLFVr5QvRHhUmhCaGo6U",
     "active_key": "QA6i4jZaof6XbHm1W6UFp7YSVqk1iGABtLFVr5QvRHhUmhCaGo6U",
@@ -336,7 +354,12 @@
       "active_key": "QA7KyzvNweGy9EeyrK7Soj2s51isj2LkSjGDyprYZQm1omMLCPN2",
       "is_lifetime_member": true
     },
-
+    {
+      "name": "luke-skywalker",
+      "owner_key": "QA7vz4GxCto7V1BNBM5ohocfWxr59nTC38rWnWzWty71bSZDrjuZ",
+      "active_key": "QA7vz4GxCto7V1BNBM5ohocfWxr59nTC38rWnWzWty71bSZDrjuZ",
+      "is_lifetime_member": true
+    },
 
     {"name": "presale9", "owner_key": "QA5aAEyaw7i7fRbTJdnYPS17t7GjjoYKvhishPLaaWbqwE67aN58", "active_key": "QA5aAEyaw7i7fRbTJdnYPS17t7GjjoYKvhishPLaaWbqwE67aN58", "is_lifetime_member": true},
     {"name": "tokensale", "owner_key": "QA5aZYtxPDGg66vz8VreM35FkwcWfadW45kQUJ8ExQwfEJ6pZ3s1", "active_key": "QA5aZYtxPDGg66vz8VreM35FkwcWfadW45kQUJ8ExQwfEJ6pZ3s1", "is_lifetime_member": true},
@@ -429,6 +452,9 @@
     {"amount": 9405000000, "asset_symbol": "QDEX", "owner": "QA8cgyrzTcm9X9pSehUhz27Kvd7fbKE3Y9Z"},
     {"amount": 21450000000, "asset_symbol": "QDEX", "owner": "QAJAskKzhn2fqqF6bWXgM8kEkDCmVjh9SUL"},
 
+    {"amount": 200000000, "asset_symbol": "QDEX", "owner": "QAD6S5nfPidKLfVhZYS4crbv3ByYt2Jj6NJ"},
+    {"amount": 200000000, "asset_symbol": "QDEX", "owner": "QA21TbqChHvcTEj2VbNwfYjEcpAF6byfD8Y"},
+    {"amount": 200000000, "asset_symbol": "QDEX", "owner": "QAA9N2Nmn2hLcfcNxQ6JfB5MfCxRsfXvMMg"},
 
     {"amount": 317008, "asset_symbol": "QDEX", "owner": "QA91xTR6LuTQUJY5JfFaVWvkqVYFhoS2YhW"},
     {"amount": 456463300, "asset_symbol": "QDEX", "owner": "QAMZL8FxeXgo4c15NdxKMCifg78xU8PdaV4"},
@@ -481,16 +507,13 @@
     {"begin_balance": 216315000000, "amount": 216315000000, "asset_symbol": "QDEX", "begin_timestamp": "2019-03-13T00:00:00", "owner": "QA8cgyrzTcm9X9pSehUhz27Kvd7fbKE3Y9Z", "vesting_duration_seconds": "62208000"},
     {"begin_balance": 493350000000, "amount": 493350000000, "asset_symbol": "QDEX", "begin_timestamp": "2019-03-13T00:00:00", "owner": "QAJAskKzhn2fqqF6bWXgM8kEkDCmVjh9SUL", "vesting_duration_seconds": "62208000"}
   ],
-  "initial_active_witnesses": 6,
+  "initial_active_witnesses": 7,
   "initial_witness_candidates": [{
     "owner_name": "quanta-foundation",
     "block_signing_key": "QA57P4GhxnUKDHMtPvZFGf5n4VhZjFRqMkb9JAsecmsouTE1oLuB"
   },{
     "owner_name": "bitcherry-witness",
     "block_signing_key": "QA7Rwbg98WGyPXzCXki8MeiEwyMQFmBoh4DTiKA8bSQN918nPd6Y"
-  },{
-    "owner_name": "clockbound-witness",
-    "block_signing_key": "QA6CGLAWV1v7hmMtCEHtyEwXBYWMyXdKbrkdXp7TrtkY2MhTLMAH"
   },{
     "owner_name": "finantra-witness",
     "block_signing_key": "QA8g4QWCPZJ8N6pW9HKvqv9Q7LzEi9T3mhHtPMMjPGigSzZ2Ucnn"
@@ -500,6 +523,12 @@
   },{
     "owner_name": "galaxyfoundationbp",
     "block_signing_key": "QA7KyzvNweGy9EeyrK7Soj2s51isj2LkSjGDyprYZQm1omMLCPN2"
+  },{
+    "owner_name": "luke-skywalker",
+    "block_signing_key": "QA7vz4GxCto7V1BNBM5ohocfWxr59nTC38rWnWzWty71bSZDrjuZ"
+  },{
+    "owner_name": "clockbound-witness",
+    "block_signing_key": "QA6CGLAWV1v7hmMtCEHtyEwXBYWMyXdKbrkdXp7TrtkY2MhTLMAH"
   }
   ],
   "initial_committee_candidates": [{
@@ -514,7 +543,7 @@
   "initial_chain_id": "aa34045518f1469a28fa4578240d5f039afa9959c0b95ce3b39674efa691fb21",
   "immutable_parameters": {
     "min_committee_member_count": 3,
-    "min_witness_count": 5,
+    "min_witness_count": 7,
     "num_special_accounts": 0,
     "num_special_assets": 0
   }
