@@ -784,7 +784,7 @@ bool database::fill_limit_order( const limit_order_object& order, const asset& p
    const account_object& seller = order.seller(*this);
    const asset_object& recv_asset = receives.asset_id(*this);
 
-   auto issuer_fees = pay_market_fees(recv_asset, receives, is_maker);
+   auto issuer_fees = pay_market_fees(seller, recv_asset, receives, is_maker);
    pay_order( seller, receives - issuer_fees, pays );
 
    assert( pays.asset_id != receives.asset_id );
@@ -886,7 +886,7 @@ bool database::fill_settle_order( const force_settlement_object& settle, const a
 { try {
    bool filled = false;
 
-   auto issuer_fees = pay_market_fees(get(receives.asset_id), receives, is_maker);
+   auto issuer_fees = pay_market_fees(get(settle.owner), get(receives.asset_id), receives, is_maker);
 
    if( pays < settle.balance )
    {
@@ -1109,14 +1109,22 @@ void database::pay_order( const account_object& receiver, const asset& receives,
    adjust_balance(receiver.get_id(), receives);
 }
 
-asset database::calculate_market_fee(const asset_object &trade_asset, const asset &trade_amount, bool is_maker)
+asset database::calculate_market_fee(const account_object& seller, const asset_object &trade_asset, const asset &trade_amount, bool is_maker)
 {
    assert( trade_asset.id == trade_amount.asset_id );
-   
+
    if( !trade_asset.charges_market_fees() )
       return trade_asset.amount(0);
    if( trade_asset.options.market_fee_percent == 0 )
       return trade_asset.amount(0);
+
+   if (head_block_time() > HARDFORK_CORE_QUANTA2_TIME)
+   {
+        const auto &props = get_global_properties();
+        share_type minimum_qdex = *props.parameters.extensions.value.zero_fee_qdex_minimum;
+        if (get_balance(seller.id, asset_id_type()).amount >= minimum_qdex)
+            return trade_asset.amount(0);
+   }
 
    fc::uint128 a(trade_amount.amount.value);
    a *= trade_asset.options.market_fee_percent;
@@ -1140,9 +1148,9 @@ asset database::calculate_market_fee(const asset_object &trade_asset, const asse
    return percent_fee;
 }
 
-asset database::pay_market_fees( const asset_object& recv_asset, const asset& receives, bool is_maker )
+asset database::pay_market_fees( const account_object& seller, const asset_object& recv_asset, const asset& receives, bool is_maker )
 {
-   auto issuer_fees = calculate_market_fee( recv_asset, receives, is_maker );
+   auto issuer_fees = calculate_market_fee( seller, recv_asset, receives, is_maker );
    assert(issuer_fees <= receives );
 
    //Don't dirty undo state if not actually collecting any fees
@@ -1166,7 +1174,7 @@ int database::pay_rebates(const account_object &maker, const account_object &tak
    // lets caculate what taker paid to the fee pool A
    const asset_object &recv_asset = usd_receives.asset_id(*this);
 
-   asset taker_fee = calculate_market_fee(recv_asset, usd_receives, false);
+   asset taker_fee = calculate_market_fee(taker, recv_asset, usd_receives, false);
 
    // ensure we don't pay more than available fee pool
    const auto &recv_dyn_data = recv_asset.dynamic_asset_data_id(*this);

@@ -81,10 +81,12 @@ namespace graphene { namespace chain {
       uint32_t                op_index;
 
       asset          risk;
+      string         bet;
       uint64_t       outcome;
       bool           win;
       asset          payout;
       asset          fee_pool;
+      asset          qdex_fee;
 
       extensions_type extensions;
 
@@ -104,4 +106,4 @@ FC_REFLECT( graphene::chain::roll_dice_operation::fee_parameters_type, (fee) )
 FC_REFLECT( graphene::chain::roll_dice_operation, (fee)(account_id)(risk)(bet)(numbers)(extensions) )
 
 FC_REFLECT( graphene::chain::roll_dice_settle_operation::fee_parameters_type, (fee) )
-FC_REFLECT( graphene::chain::roll_dice_settle_operation, (fee)(account_id)(risk)(outcome)(win)(payout)(fee_pool)(extensions) )
+FC_REFLECT( graphene::chain::roll_dice_settle_operation, (fee)(account_id)(block_id)(tx)(op_index)(risk)(outcome)(win)(bet)(payout)(qdex_fee)(fee_pool)(extensions) )

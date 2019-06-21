@@ -43,6 +43,15 @@ We recommend building on Ubuntu 16.04 LTS (64-bit)
     cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo .
     make
 
+    cmake -DGRAPHENE_EGENESIS_JSON="$(pwd)/genesis.json" -DCMAKE_BUILD_TYPE=RelWithDebInfo .
+
+    programs/witness_node/witness_node -d data/testnet --replay-blockchain --seed-nodes [] --enable-stale-production   
+
+** Make for mainnet**
+    
+    cmake -DGRAPHENE_EGENESIS_JSON="$(pwd)/genesis_mainnet.json" -DCMAKE_BUILD_TYPE=RelWithDebInfo .
+
+
 **Upgrade Script** (prepend to the Build Script above if you built a prior release):
 
     git remote set-url origin https://github.com/bitshares/bitshares-core.git

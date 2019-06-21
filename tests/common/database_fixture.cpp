@@ -752,6 +752,23 @@ asset database_fixture::cancel_limit_order( const limit_order_object& order )
   return processed.operation_results[0].get<asset>();
 }
 
+processed_transaction database_fixture::roll_dice( account_id_type user, const asset& risk, const string &bet, const flat_set<uint16_t> numbers) {
+    roll_dice_operation dice_op;
+    dice_op.account_id = user;
+    dice_op.risk = risk;
+    dice_op.bet = bet;
+    dice_op.numbers = numbers;
+    set_expiration( db, trx );
+    trx.operations.push_back(dice_op);
+
+    for( auto& op : trx.operations ) db.current_fee_schedule().set_fee(op);
+    trx.validate();
+    auto processed = db.push_transaction(trx, ~0);
+    trx.operations.clear();
+    verify_asset_supplies(db);
+    return processed;
+}
+
 void database_fixture::transfer(
    account_id_type from,
    account_id_type to,

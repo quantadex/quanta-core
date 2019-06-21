@@ -10,6 +10,7 @@
 #include <graphene/chain/is_authorized_asset.hpp>
 #include <fc/crypto/hmac.hpp>
 #include <fc/crypto/hex.hpp>
+#include <graphene/chain/hardfork.hpp>
 
 namespace graphene { namespace chain {
    void_result rolldice_evaluator::do_evaluate( const roll_dice_operation& op ){
@@ -35,7 +36,7 @@ namespace graphene { namespace chain {
 
             FC_ASSERT( insufficient_balance,
                        "Insufficient Balance: ${balance}, unable to bet '${bet_amount}' from account '${a}'",
-                      ("bet_amount",d.to_pretty_string(op.risk.amount))("balance",d.to_pretty_string(d.get_balance(from_account, asset_type)))("a",from_account.name) );
+                      ("bet_amount",d.to_pretty_string(op.risk))("balance",d.to_pretty_string(d.get_balance(from_account, asset_type)))("a",from_account.name) );
 
             return void_result();
          } FC_RETHROW_EXCEPTIONS( error, "Unauthorized account ${a} from ${f}", ("a",d.to_pretty_string(op.risk.amount))("f",op.account_id(d).name) );
@@ -116,15 +117,26 @@ namespace graphene { namespace chain {
               *d.get_global_properties().parameters.extensions.value.roll_dice_percent_of_fee : GRAPHENE_1_PERCENT;
 
       float fee_dec = float(fee) / GRAPHENE_100_PERCENT;
+      bool after_fork = d.head_block_time() >= HARDFORK_CORE_QUANTA2_TIME;
 
       ilog("roll_dice outcome=${o} ${bet} ${data} win=${win} fee=${fee} reward=${reward}", ("bet", op.bet.c_str())("o",randomN)("data", out.str().c_str())("win",win)("fee",fee)("reward", reward));
 
       asset payout_obj;
       asset fee_pool;
+      asset qdex_amount;
 
       if (win) {
          float payrate = reward - 1;
          fc::safe<int64_t> payout = op.risk.amount * payrate;
+
+         if (after_fork) {
+             uint32_t payrateI = payrate * GRAPHENE_100_PERCENT;
+             fc::uint128 r(op.risk.amount.value);
+             r *= payrateI;
+             r /= GRAPHENE_100_PERCENT;
+             payout = r.to_uint64();
+         }
+
          asset balance = d.get_balance(account_id_type(2), op.risk.asset_id);
 
          share_type available_payout = std::min(payout, balance.amount);
@@ -133,14 +145,46 @@ namespace graphene { namespace chain {
          share_type fee_to_pool = fee_dec * (payout + op.risk.amount);
          share_type payout_amount;
 
-         // we don't even have enough to pay fee pool
-         // just pay remaining to user
-         if (fee_to_pool > available_payout) {
-            fee_to_pool = 0;
-            payout_amount = available_payout;
+          if (after_fork) {
+             fee_to_pool = cut_fee(payout + op.risk.amount, fee);
+
+             asset core_required = asset( fee_to_pool/2, asset_id_type(0) ) * asset_type.options.core_exchange_rate;
+             asset core_balance = d.get_balance(from_account.id, asset_id_type(0));
+             bool payInQdex = false; //(core_balance.amount - core_required.amount) > 1*GRAPHENE_BLOCKCHAIN_PRECISION;
+             ilog("core required ${required} ${balance}", ("required", core_required)("balance", core_balance));
+
+             if (payInQdex) {
+                 payout_amount = available_payout;
+                 fee_to_pool = 0;
+                 qdex_amount.amount = core_required.amount;
+                 d.adjust_balance(op.account_id, -qdex_amount);
+
+                 d.modify(from_account.statistics(d), [&](account_statistics_object& s)
+                 {
+                     s.pay_fee( qdex_amount.amount, d.get_global_properties().parameters.cashback_vesting_threshold );
+                 });
+
+             } else {
+                 // we don't even have enough to pay fee pool
+                 // just pay remaining to user
+                 if (fee_to_pool > available_payout) {
+                     fee_to_pool = 0;
+                     payout_amount = available_payout;
+                 } else {
+                     payout_amount = available_payout - fee_to_pool;
+                 }
+             }
+
          } else {
-            payout_amount = available_payout - fee_to_pool;
-         }
+              // we don't even have enough to pay fee pool
+              // just pay remaining to user
+              if (fee_to_pool > available_payout) {
+                  fee_to_pool = 0;
+                  payout_amount = available_payout;
+              } else {
+                  payout_amount = available_payout - fee_to_pool;
+              }
+          }
 
          payout_obj = asset(payout_amount,op.risk.asset_id);
          fee_pool = asset(fee_to_pool,op.risk.asset_id);
@@ -148,16 +192,21 @@ namespace graphene { namespace chain {
          d.adjust_balance(account_id_type(2), -full_payout);
          d.adjust_balance(op.account_id, payout_obj);
 
+         ilog("win! risk= ${risk} payout = ${payout} fee_pool = ${fee_pool} qdex_fee = ${qdex}",("risk", op.risk.amount)("payout", payout_obj.amount)("fee_pool",fee_pool.amount)("qdex", qdex_amount.amount));
+
          // pay fee pool if we can.
          if (fee_pool.amount > share_type(0)) {
-            const auto &recv_dyn_data = asset_type.dynamic_asset_data_id(d);
-            d.modify(recv_dyn_data, [&](asset_dynamic_data_object &obj) {
-                obj.accumulated_fees += fee_to_pool;
-            });
+             const auto &recv_dyn_data = asset_type.dynamic_asset_data_id(d);
+             d.modify(recv_dyn_data, [&](asset_dynamic_data_object &obj) {
+                 obj.accumulated_fees += fee_to_pool;
+             });
          }
 
       } else {
          share_type fee_to_pool = op.risk.amount * fee_dec;
+         if (after_fork) {
+             fee_to_pool = cut_fee(op.risk.amount,fee);
+         }
          asset pot_amount = asset(op.risk.amount-fee_to_pool, op.risk.asset_id);
          fee_pool = asset(fee_to_pool,op.risk.asset_id);
 
@@ -176,8 +225,10 @@ namespace graphene { namespace chain {
       op_settle.account_id = op.account_id;
       op_settle.block_id = block_id;
       op_settle.tx = tx;
+      op_settle.qdex_fee = qdex_amount;
       op_settle.op_index = op_index;
       op_settle.risk = op.risk;
+      op_settle.bet = op.bet;
       op_settle.outcome = randomN;
       op_settle.win = win;
       op_settle.fee_pool = fee_pool;

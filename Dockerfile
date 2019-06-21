@@ -23,8 +23,11 @@ RUN \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ADD https://github.com/quantadex/quanta-core/releases/download/1.03/cli_wallet.linux.amd64  /usr/local/bin/cli_wallet
-ADD https://github.com/quantadex/quanta-core/releases/download/1.03/witness_node.linux.amd64 /usr/local/bin/witness_node
+#ADD https://github.com/quantadex/quanta-core/releases/download/1.03/cli_wallet.linux.amd64  /usr/local/bin/cli_wallet
+#ADD https://github.com/quantadex/quanta-core/releases/download/1.03/witness_node.linux.amd64 /usr/local/bin/witness_node
+ADD programs/cli_wallet/cli_wallet /usr/local/bin/cli_wallet
+ADD programs/witness_node/witness_node /usr/local/bin/witness_node
+
 RUN chmod +x /usr/local/bin/cli_wallet  /usr/local/bin/witness_node
 # Compile
 # RUN \

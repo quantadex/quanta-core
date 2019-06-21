@@ -467,6 +467,7 @@ namespace graphene { namespace app {
          graphene::chain::database& _db;
    };
 
+
    /**
     * @brief the orders_api class exposes access to data processed with grouped orders plugin.
     */

@@ -48,6 +48,8 @@ void roll_dice_operation::validate()const
      if (bet[0] == '>' || bet[0] == '<') {
         if(is_number(bet.substr(1))) {
            is_range_bet = true;
+           const int num = atoi(bet.substr(1).c_str());
+           FC_ASSERT( num > 0 && num < 100);
         }
      }
   }

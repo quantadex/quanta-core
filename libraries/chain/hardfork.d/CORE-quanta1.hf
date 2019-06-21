@@ -1,3 +1,7 @@
 #ifndef HARDFORK_CORE_QUANTA1_TIME
 #define HARDFORK_CORE_QUANTA1_TIME (fc::time_point_sec( 1552010400 ))
 #endif
+
+#ifndef HARDFORK_CORE_QUANTA2_TIME
+#define HARDFORK_CORE_QUANTA2_TIME (fc::time_point_sec( 1561334400 ))
+#endif

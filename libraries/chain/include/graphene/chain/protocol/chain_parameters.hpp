@@ -75,6 +75,7 @@ namespace graphene { namespace chain {
          optional<uint16_t> referrer_rebate_percent_of_fee = 3000; ///< percent of transaction fees paid to network
          optional<uint16_t> promo_referrer_rebate_percent_of_fee = 4000; ///< percent of transaction fees paid to network
          optional<uint16_t> roll_dice_percent_of_fee = 100;
+         optional<share_type> zero_fee_qdex_minimum = 1000*GRAPHENE_BLOCKCHAIN_PRECISION;
       };
 
       typedef extension<options_type> extensions_type;
@@ -118,5 +119,5 @@ FC_REFLECT( graphene::chain::chain_parameters,
             (extensions)
           )
           
-FC_REFLECT(graphene::chain::chain_parameters::options_type, (maker_rebate_percent_of_fee)(referrer_rebate_percent_of_fee)(promo_referrer_rebate_percent_of_fee)(roll_dice_percent_of_fee))
+FC_REFLECT(graphene::chain::chain_parameters::options_type, (maker_rebate_percent_of_fee)(zero_fee_qdex_minimum)(referrer_rebate_percent_of_fee)(promo_referrer_rebate_percent_of_fee)(roll_dice_percent_of_fee))
 FC_REFLECT_TYPENAME(graphene::chain::chain_parameters::extensions_type)
