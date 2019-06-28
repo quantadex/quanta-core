@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 #include <graphene/chain/protocol/custom.hpp>
+#include <graphene/chain/hardfork.hpp>
 
 bool is_number(const std::string& s)
 {
@@ -49,7 +50,7 @@ void roll_dice_operation::validate()const
         if(is_number(bet.substr(1))) {
            is_range_bet = true;
            const int num = atoi(bet.substr(1).c_str());
-           FC_ASSERT( num > 0 && num < 100);
+           FC_ASSERT( num > 1 && num < 100);
         }
      }
   }

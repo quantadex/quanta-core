@@ -74,7 +74,7 @@ namespace graphene { namespace chain {
          optional<uint16_t> maker_rebate_percent_of_fee = 5000; ///< percent of transaction fees paid to network
          optional<uint16_t> referrer_rebate_percent_of_fee = 3000; ///< percent of transaction fees paid to network
          optional<uint16_t> promo_referrer_rebate_percent_of_fee = 4000; ///< percent of transaction fees paid to network
-         optional<uint16_t> roll_dice_percent_of_fee = 100;
+         optional<uint16_t> roll_dice_percent_of_fee = 300;
          optional<share_type> zero_fee_qdex_minimum = 1000*GRAPHENE_BLOCKCHAIN_PRECISION;
       };
 

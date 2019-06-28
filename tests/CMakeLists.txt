@@ -18,6 +18,12 @@ file(GLOB PERFORMANCE_TESTS "performance/*.cpp")
 add_executable( performance_test ${COMMON_SOURCES} ${PERFORMANCE_TESTS} )
 target_link_libraries( performance_test graphene_chain graphene_app graphene_account_history graphene_elasticsearch graphene_es_objects graphene_egenesis_none fc ${PLATFORM_SPECIFIC_LIBS} )
 
+include_directories(/usr/local/include)
+file(GLOB RANDOM_TESTS "random/*.cpp")
+add_executable( random_test ${COMMON_SOURCES} ${RANDOM_TESTS} )
+target_link_libraries( random_test testu01 graphene_chain graphene_app graphene_account_history graphene_elasticsearch graphene_es_objects graphene_egenesis_none fc ${PLATFORM_SPECIFIC_LIBS} )
+
+
 file(GLOB BENCH_MARKS "benchmarks/*.cpp")
 add_executable( chain_bench ${COMMON_SOURCES} ${BENCH_MARKS} )
 target_link_libraries( chain_bench graphene_chain graphene_app graphene_account_history graphene_elasticsearch graphene_es_objects graphene_egenesis_none fc ${PLATFORM_SPECIFIC_LIBS} )

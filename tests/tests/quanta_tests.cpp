@@ -29,7 +29,7 @@ BOOST_FIXTURE_TEST_SUITE( quanta_tests, database_fixture )
             transfer(committee_account, joe_id, asset( 10000*GRAPHENE_BLOCKCHAIN_PRECISION ) );
 
 
-            transfer(committee_account, jane_id, asset( 10*GRAPHENE_BLOCKCHAIN_PRECISION ) );
+            transfer(committee_account, jane_id, asset( 10000*GRAPHENE_BLOCKCHAIN_PRECISION ) );
             const asset_object& usdcoin = create_user_issued_asset( "USD", jane, 0);
             asset_id_type usd_id = usdcoin.id;
 
@@ -50,7 +50,7 @@ BOOST_FIXTURE_TEST_SUITE( quanta_tests, database_fixture )
 
             for (int i=0; i<30; i++) {
                 asset start = db.get_balance(joe_id, asset_id_type(0));
-                processed = roll_dice(joe_id, asset(GRAPHENE_BLOCKCHAIN_PRECISION), ">90", flat_set<uint16_t>());
+                processed = roll_dice(joe_id, asset(GRAPHENE_BLOCKCHAIN_PRECISION), ">2", flat_set<uint16_t>());
                 db.generate_block(db.get_slot_time(1), db.get_scheduled_witness(1), init_account_priv_key, database::skip_transaction_signatures | database::skip_tapos_check);
                 asset end = db.get_balance(joe_id, asset_id_type(0));
                 ilog("start = ${start} end = ${end} diff = ${diff}", ("start", start)("end",end)("diff", end-start));
@@ -77,6 +77,17 @@ BOOST_FIXTURE_TEST_SUITE( quanta_tests, database_fixture )
 //            for( auto& op : trx.operations ) db.current_fee_schedule().set_fee(op);
 //            tx.set_expiration( db.head_block_time() + 10 * db.get_global_properties().parameters.block_interval );
 //            PUSH_TX( db, tx, database::skip_authority_check | database::skip_tapos_check | database::skip_transaction_signatures );
+
+            generate_blocks(HARDFORK_CORE_QUANTA3_TIME, true, skip);
+            enable_fees();
+
+            for (int i=0; i<15; i++) {
+                asset start = db.get_balance(jane_id, asset_id_type(0));
+                processed = roll_dice(jane_id, asset(100, usd_id), ">90", flat_set<uint16_t>());
+                db.generate_block(db.get_slot_time(1), db.get_scheduled_witness(1), init_account_priv_key, database::skip_transaction_signatures | database::skip_tapos_check);
+                asset end = db.get_balance(jane_id, asset_id_type(0));
+                ilog("start = ${start} end = ${end} diff = ${diff}", ("start", start)("end",end)("diff", end-start));
+            }
 
             for (int i=0; i<15; i++) {
                 asset start = db.get_balance(jane_id, asset_id_type(0));

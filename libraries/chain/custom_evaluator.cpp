@@ -4,14 +4,19 @@
 #include <iostream>
 
 #include <fc/smart_ref_impl.hpp>
+#include <fc/crypto/hmac.hpp>
+#include <fc/crypto/hex.hpp>
 
 #include <graphene/chain/custom_evaluator.hpp>
 #include <graphene/chain/database.hpp>
 #include <graphene/chain/is_authorized_asset.hpp>
-#include <fc/crypto/hmac.hpp>
-#include <fc/crypto/hex.hpp>
 #include <graphene/chain/hardfork.hpp>
 
+bool is_number_(const std::string& s)
+{
+    return !s.empty() && std::find_if(s.begin(),
+                                      s.end(), [](char c) { return !std::isdigit(c); }) == s.end();
+}
 namespace graphene { namespace chain {
    void_result rolldice_evaluator::do_evaluate( const roll_dice_operation& op ){
       try {
@@ -31,6 +36,16 @@ namespace graphene { namespace chain {
                             ("asset",op.risk.asset_id)
             );
 
+             bool is_range_bet = false;
+             if (op.bet.length() > 0) {
+                 if (op.bet[0] == '>' || op.bet[0] == '<') {
+                     if(is_number_(op.bet.substr(1))) {
+                         is_range_bet = true;
+                         const int num = atoi(op.bet.substr(1).c_str());
+                         FC_ASSERT( num > 1 && num < 100);
+                     }
+                 }
+             }
 
             bool insufficient_balance = d.get_balance( from_account, asset_type ).amount >= op.risk.amount;
 
@@ -53,6 +68,23 @@ namespace graphene { namespace chain {
       return (fc::bigint(min) + (n % fc::bigint(max-min))).to_int64();
    }
 
+    uint64_t reject_sampling(std::string c, std::string data, uint64_t min, uint64_t max) {
+        uint64_t usable = UINT32_MAX / (max-min);
+        const char *current_data = data.c_str();
+        size_t current_data_size = data.size();
+        uint64_t retrieved = 0;
+
+        do {
+            fc::hmac_sha256 mac;
+            fc::sha256 h = mac.digest( c.c_str(), c.size(), current_data, current_data_size );
+            current_data = h.data();
+            current_data_size = h.data_size();
+            retrieved = generate_random(c, h, 0, UINT32_MAX);
+        } while(retrieved < usable);
+
+        return (retrieved % max) + min;
+    }
+
    void_result rolldice_evaluator::do_apply( const roll_dice_operation& op ){
       database& d = db();
       const account_object& from_account    = op.account_id(d);
@@ -73,11 +105,18 @@ namespace graphene { namespace chain {
    {
       const account_object& from_account    = op.account_id(d);
       const asset_object&   asset_type      = op.risk.asset_id(d);
+       bool after_fork3 = d.head_block_time() >= HARDFORK_CORE_QUANTA3_TIME;
 
       std::ostringstream out;
       out << fc::to_hex((const char*)blocksig.begin(), blocksig.size()) << "," << fc::to_hex((const char*)tx.data(), tx.data_size()) << "," << op_index;
 
-      uint64_t randomN = generate_random(d.get_chain_id().str(), out.str(), 1, 100);
+      uint64_t randomN;
+
+      if (after_fork3) {
+          randomN = reject_sampling(d.get_chain_id().str(), out.str(), 1, 100);
+      } else {
+          randomN = generate_random(d.get_chain_id().str(), out.str(), 1, 100);
+      }
 
       bool win = false;
       double reward = 0.0;
@@ -140,7 +179,7 @@ namespace graphene { namespace chain {
          asset balance = d.get_balance(account_id_type(2), op.risk.asset_id);
 
          share_type available_payout = std::min(payout, balance.amount);
-         asset full_payout = asset(available_payout, op.risk.asset_id);
+         asset full_payout;
 
          share_type fee_to_pool = fee_dec * (payout + op.risk.amount);
          share_type payout_amount;
@@ -148,25 +187,15 @@ namespace graphene { namespace chain {
           if (after_fork) {
              fee_to_pool = cut_fee(payout + op.risk.amount, fee);
 
-             asset core_required = asset( fee_to_pool/2, asset_id_type(0) ) * asset_type.options.core_exchange_rate;
-             asset core_balance = d.get_balance(from_account.id, asset_id_type(0));
-             bool payInQdex = false; //(core_balance.amount - core_required.amount) > 1*GRAPHENE_BLOCKCHAIN_PRECISION;
-             ilog("core required ${required} ${balance}", ("required", core_required)("balance", core_balance));
-
-             if (payInQdex) {
-                 payout_amount = available_payout;
-                 fee_to_pool = 0;
-                 qdex_amount.amount = core_required.amount;
-                 d.adjust_balance(op.account_id, -qdex_amount);
-
-                 d.modify(from_account.statistics(d), [&](account_statistics_object& s)
-                 {
-                     s.pay_fee( qdex_amount.amount, d.get_global_properties().parameters.cashback_vesting_threshold );
-                 });
-
+             // we don't even have enough to pay fee pool
+             // just pay remaining to user
+             if (after_fork3) {
+                 if (fee_to_pool > available_payout) {
+                     fee_to_pool = cut_fee(available_payout, fee); // pay available
+                 }
+                 payout_amount = available_payout - fee_to_pool;
+                 full_payout.amount = payout_amount; // keep in the account
              } else {
-                 // we don't even have enough to pay fee pool
-                 // just pay remaining to user
                  if (fee_to_pool > available_payout) {
                      fee_to_pool = 0;
                      payout_amount = available_payout;
@@ -195,7 +224,7 @@ namespace graphene { namespace chain {
          ilog("win! risk= ${risk} payout = ${payout} fee_pool = ${fee_pool} qdex_fee = ${qdex}",("risk", op.risk.amount)("payout", payout_obj.amount)("fee_pool",fee_pool.amount)("qdex", qdex_amount.amount));
 
          // pay fee pool if we can.
-         if (fee_pool.amount > share_type(0)) {
+         if (fee_pool.amount > share_type(0) && !after_fork3) {
              const auto &recv_dyn_data = asset_type.dynamic_asset_data_id(d);
              d.modify(recv_dyn_data, [&](asset_dynamic_data_object &obj) {
                  obj.accumulated_fees += fee_to_pool;
@@ -203,22 +232,29 @@ namespace graphene { namespace chain {
          }
 
       } else {
-         share_type fee_to_pool = op.risk.amount * fee_dec;
-         if (after_fork) {
-             fee_to_pool = cut_fee(op.risk.amount,fee);
-         }
-         asset pot_amount = asset(op.risk.amount-fee_to_pool, op.risk.asset_id);
-         fee_pool = asset(fee_to_pool,op.risk.asset_id);
+          if (after_fork3) {
+              d.adjust_balance(op.account_id, -op.risk);
+              d.adjust_balance(account_id_type(2), op.risk);
+              payout_obj = -op.risk;
+          } else {
+              share_type fee_to_pool = op.risk.amount * fee_dec;
+              if (after_fork) {
+                  fee_to_pool = cut_fee(op.risk.amount,fee);
+              }
+              asset pot_amount = asset(op.risk.amount-fee_to_pool, op.risk.asset_id);
 
-         d.adjust_balance(op.account_id, -op.risk);
-         d.adjust_balance(account_id_type(2), pot_amount);
-         payout_obj = -op.risk;
 
-         const auto &recv_dyn_data = asset_type.dynamic_asset_data_id(d);
-         d.modify(recv_dyn_data, [&](asset_dynamic_data_object &obj) {
-             obj.accumulated_fees += fee_to_pool;
-         });
+              fee_pool = asset(fee_to_pool,op.risk.asset_id);
 
+              d.adjust_balance(op.account_id, -op.risk);
+              d.adjust_balance(account_id_type(2), pot_amount);
+              payout_obj = -op.risk;
+
+              const auto &recv_dyn_data = asset_type.dynamic_asset_data_id(d);
+              d.modify(recv_dyn_data, [&](asset_dynamic_data_object &obj) {
+                  obj.accumulated_fees += fee_to_pool;
+              });
+          }
       }
 
       roll_dice_settle_operation op_settle;
