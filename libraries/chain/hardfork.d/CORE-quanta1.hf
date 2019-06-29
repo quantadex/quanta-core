@@ -8,5 +8,5 @@
 
 // added rejection sampling.
 #ifndef HARDFORK_CORE_QUANTA3_TIME
-#define HARDFORK_CORE_QUANTA3_TIME (fc::time_point_sec( 1561334400 ))
+#define HARDFORK_CORE_QUANTA3_TIME (fc::time_point_sec( 1561755488 ))
 #endif

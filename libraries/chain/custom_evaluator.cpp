@@ -42,7 +42,9 @@ namespace graphene { namespace chain {
                      if(is_number_(op.bet.substr(1))) {
                          is_range_bet = true;
                          const int num = atoi(op.bet.substr(1).c_str());
-                         FC_ASSERT( num > 1 && num < 100);
+                         if (d.head_block_time() >= HARDFORK_CORE_QUANTA3_TIME) {
+                             FC_ASSERT( num > 1 && num < 100);
+                         }
                      }
                  }
              }
@@ -136,12 +138,20 @@ namespace graphene { namespace chain {
          if (op.bet[0] == '>' || op.bet[0] == '<') {
             int betNum = atoi(op.bet.substr(1).c_str());
             if (op.bet[0] == '>') {
-               win = randomN >= betNum;
+               if (after_fork3) 
+		 win = randomN > betNum;
+               else 
+	         win = randomN >= betNum;
                reward = 1./((100.-betNum)/100.);
             }
             if (op.bet[0] == '<') {
-               win = randomN <= betNum;
-               reward = 1./((betNum)/100.);
+               if (after_fork3) {
+                   win = randomN < betNum;
+                   reward = 1./((betNum-1)/100.);
+               } else {
+                   win = randomN <= betNum;
+                   reward = 1./((betNum)/100.);
+               }
             }
          }
       } else {
@@ -179,7 +189,7 @@ namespace graphene { namespace chain {
          asset balance = d.get_balance(account_id_type(2), op.risk.asset_id);
 
          share_type available_payout = std::min(payout, balance.amount);
-         asset full_payout;
+         asset full_payout = asset(available_payout, op.risk.asset_id);
 
          share_type fee_to_pool = fee_dec * (payout + op.risk.amount);
          share_type payout_amount;
@@ -195,6 +205,7 @@ namespace graphene { namespace chain {
                  }
                  payout_amount = available_payout - fee_to_pool;
                  full_payout.amount = payout_amount; // keep in the account
+                 fee_to_pool = 0;
              } else {
                  if (fee_to_pool > available_payout) {
                      fee_to_pool = 0;
@@ -224,7 +235,7 @@ namespace graphene { namespace chain {
          ilog("win! risk= ${risk} payout = ${payout} fee_pool = ${fee_pool} qdex_fee = ${qdex}",("risk", op.risk.amount)("payout", payout_obj.amount)("fee_pool",fee_pool.amount)("qdex", qdex_amount.amount));
 
          // pay fee pool if we can.
-         if (fee_pool.amount > share_type(0) && !after_fork3) {
+         if (fee_pool.amount > share_type(0)) {
              const auto &recv_dyn_data = asset_type.dynamic_asset_data_id(d);
              d.modify(recv_dyn_data, [&](asset_dynamic_data_object &obj) {
                  obj.accumulated_fees += fee_to_pool;

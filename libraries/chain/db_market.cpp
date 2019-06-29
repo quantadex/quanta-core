@@ -1118,9 +1118,10 @@ asset database::calculate_market_fee(const account_object& seller, const asset_o
    if( trade_asset.options.market_fee_percent == 0 )
       return trade_asset.amount(0);
 
+   const auto &props = get_global_properties();
+
    if (head_block_time() > HARDFORK_CORE_QUANTA2_TIME)
    {
-        const auto &props = get_global_properties();
         share_type minimum_qdex = *props.parameters.extensions.value.zero_fee_qdex_minimum;
         if (get_balance(seller.id, asset_id_type()).amount >= minimum_qdex)
             return trade_asset.amount(0);
@@ -1134,9 +1135,8 @@ asset database::calculate_market_fee(const account_object& seller, const asset_o
    if( percent_fee.amount > trade_asset.options.max_market_fee )
       percent_fee.amount = trade_asset.options.max_market_fee;
 
-   if( head_block_time() >= HARDFORK_CORE_QUANTA1_TIME ) {
+   if( head_block_time() >= HARDFORK_CORE_QUANTA1_TIME) {
       //Taker fee is calculated as, market_fee - (market_fee * maker_rebate_percent_of_fee). Negative number reflects, fees coming from taker.
-      const auto &props = get_global_properties();
 
       if (is_maker)
       {
