@@ -112,13 +112,15 @@ namespace graphene { namespace chain {
         int64_t seed = (n % fc::bigint(INT32_MAX)).to_int64();
         AES_state_t state;
         aes_set(&state, seed);
-        uint64_t usable = UINT32_MAX / (max-min);
-        uint64_t retrieved;
-        do {
-            retrieved = aes_get(&state);
-        } while(retrieved < usable);
-
-        ilog("rng_aes seed=${seed} roll=${roll}",("seed", seed)("roll", retrieved));
+        uint64_t scale = UINT64_MAX / max;
+        uint64_t retrieved = aes_get(&state);
+//        do {
+//            retrieved = aes_get(&state) / scale;
+//            ilog("rng_aes seed=${seed} roll=${roll}",("seed", seed)("roll", retrieved));
+//
+//        } while(retrieved >= max);
+//
+//        ilog("rng_aes seed=${seed} roll=${roll}",("seed", seed)("roll", retrieved));
 
         return (retrieved % max) + min;
     }
