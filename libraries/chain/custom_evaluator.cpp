@@ -6,11 +6,13 @@
 #include <fc/smart_ref_impl.hpp>
 #include <fc/crypto/hmac.hpp>
 #include <fc/crypto/hex.hpp>
+#include <fc/crypto/sha1.hpp>
 
 #include <graphene/chain/custom_evaluator.hpp>
 #include <graphene/chain/database.hpp>
 #include <graphene/chain/is_authorized_asset.hpp>
 #include <graphene/chain/hardfork.hpp>
+#include <graphene/rng/rng_aes.hpp>
 
 bool is_number_(const std::string& s)
 {
@@ -103,8 +105,25 @@ namespace graphene { namespace chain {
       return void_result();
    }
 
-   void rolldice_evaluator::settle( database &d, uint32_t block_id, transaction_id_type tx, uint32_t op_index, const roll_dice_operation& op, signature_type blocksig)
-   {
+    uint64_t rng_aes(std::string data, uint64_t min, uint64_t max) {
+        fc::sha1 hash;
+        fc::sha1 h = hash.hash(data);
+        fc::bigint n = fc::bigint(h.data(), h.data_size());
+        int64_t seed = (n % fc::bigint(INT32_MAX)).to_int64();
+        AES_state_t state;
+        aes_set(&state, seed);
+        uint64_t usable = UINT32_MAX / (max-min);
+        uint64_t retrieved;
+        do {
+            retrieved = aes_get(&state);
+        } while(retrieved < usable);
+
+        ilog("rng_aes seed=${seed} roll=${roll}",("seed", seed)("roll", retrieved));
+
+        return (retrieved % max) + min;
+    }
+
+    void rolldice_evaluator::settle( database &d, uint32_t block_id, transaction_id_type tx, uint32_t op_index, const roll_dice_operation& op, signature_type blocksig) {
       const account_object& from_account    = op.account_id(d);
       const asset_object&   asset_type      = op.risk.asset_id(d);
        bool after_fork3 = d.head_block_time() >= HARDFORK_CORE_QUANTA3_TIME;
@@ -115,7 +134,7 @@ namespace graphene { namespace chain {
       uint64_t randomN;
 
       if (after_fork3) {
-          randomN = reject_sampling(d.get_chain_id().str(), out.str(), 1, 100);
+          randomN = rng_aes(out.str(), 1, 100);
       } else {
           randomN = generate_random(d.get_chain_id().str(), out.str(), 1, 100);
       }

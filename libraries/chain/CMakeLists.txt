@@ -93,6 +93,9 @@ add_library( graphene_chain
 
              is_authorized_asset.cpp
 
+        rng_aes.cpp
+        rijndael-alg-fst.cpp
+
              ${HEADERS}
              ${PROTOCOL_HEADERS}
              "${CMAKE_CURRENT_BINARY_DIR}/include/graphene/chain/hardfork.hpp"
